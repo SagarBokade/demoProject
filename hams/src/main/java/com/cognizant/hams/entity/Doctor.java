@@ -8,13 +8,17 @@ import lombok.Data;
 @Data
 public class Doctor {
     @Id
-    private String doctorId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long doctorId;
 
     @OneToOne
     @JoinColumn(name = "userId")
     private User user;
 
-    private String name;
+    @Version
+    private Long version;
+
+    private String doctorName;
     private String contactNumber;
     private String email;
 }
