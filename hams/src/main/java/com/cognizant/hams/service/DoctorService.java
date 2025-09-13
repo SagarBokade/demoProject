@@ -10,8 +10,8 @@ public interface DoctorService {
 
     // Basic Curd operation
     Doctor createDoctor(Doctor doctor);
-//    Doctor getDoctorById(Long doctorId);
-//    List<Doctor> getAllDoctor();
+    Doctor getDoctorById(Long doctorId);
+    List<Doctor> getAllDoctor();
 //    Doctor updateDoctor(Long doctorId,Doctor doctor);
 //    void deleteDoctor(Long doctorId);
 //
