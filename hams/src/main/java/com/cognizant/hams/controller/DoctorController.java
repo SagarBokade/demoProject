@@ -43,4 +43,15 @@ public class DoctorController {
         List<Doctor> doctors = doctorServiceImpl.getAllDoctor();
         return new ResponseEntity<>(doctors,HttpStatus.OK);
     }
+
+    @PutMapping("/{doctorId}")
+    public ResponseEntity<Doctor> updateDoctor(@PathVariable("doctorId") Long doctorId,@RequestBody Doctor doctor){
+        try{
+            Doctor updateDoctor = doctorServiceImpl.updateDoctor(doctorId,doctor);
+            return new ResponseEntity<>(updateDoctor,HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
 }

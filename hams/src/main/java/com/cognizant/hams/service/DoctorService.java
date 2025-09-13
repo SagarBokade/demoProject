@@ -12,7 +12,7 @@ public interface DoctorService {
     Doctor createDoctor(Doctor doctor);
     Doctor getDoctorById(Long doctorId);
     List<Doctor> getAllDoctor();
-//    Doctor updateDoctor(Long doctorId,Doctor doctor);
+    Doctor updateDoctor(Long doctorId,Doctor doctor);
 //    void deleteDoctor(Long doctorId);
 //
 //    // Domain Specific

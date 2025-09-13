@@ -2,15 +2,17 @@ package com.cognizant.hams.service;
 
 import com.cognizant.hams.entity.Doctor;
 import com.cognizant.hams.repository.DoctorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
 
-//    @Autowired
+    @Autowired
     private final DoctorRepository doctorRepository;
 
     public DoctorServiceImpl(DoctorRepository doctorRepository){
@@ -48,6 +50,17 @@ public class DoctorServiceImpl implements DoctorService {
 
     public List<Doctor> getAllDoctor(){
         return doctorRepository.findAll();
+    }
+
+    public Doctor updateDoctor(Long doctorId,Doctor doctor){
+        Doctor existingDoctor = doctorRepository.findByDoctorId(doctorId).
+                orElseThrow(()-> new RuntimeException("Doctor not exist with id:" + doctorId));
+
+        existingDoctor.setDoctorName(doctor.getDoctorName());
+        existingDoctor.setEmail(doctor.getEmail());
+        existingDoctor.setContactNumber(doctor.getContactNumber());
+
+        return doctorRepository.save(existingDoctor);
     }
 
 }
