@@ -1,66 +1,128 @@
 package com.cognizant.hams.service;
 
+import com.cognizant.hams.dto.DoctorDTO;
+import com.cognizant.hams.dto.DoctorResponseDTO;
 import com.cognizant.hams.entity.Doctor;
+import com.cognizant.hams.exception.APIException;
+import com.cognizant.hams.exception.ResourceNotFoundException;
 import com.cognizant.hams.repository.DoctorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DoctorServiceImpl implements DoctorService {
 
-    @Autowired
     private final DoctorRepository doctorRepository;
 
-    public DoctorServiceImpl(DoctorRepository doctorRepository){
-        this.doctorRepository = doctorRepository;
-    }
+    private final ModelMapper modelMapper;
 
-    public Doctor createDoctor(Doctor doctor) {
+//    private SpecializationRepository specializationRepository;
+
+//    public DoctorServiceImpl(DoctorRepository doctorRepository, SpecializationRepository specializationRepository){
+//        this.doctorRepository = doctorRepository;
+//        this.specializationRepository = specializationRepository;
+//    }
+
+    @Override
+    public DoctorResponseDTO createDoctor(DoctorDTO doctorDTO) {
         // Option A: If you're creating a new doctor, make sure the ID is null
         // and Hibernate will insert it.
         // If an ID is present, treat it as an update.
-        if (doctor.getDoctorId() == null) {
-            return doctorRepository.save(doctor);
-        } else {
-            // Option B: For updates, retrieve the existing entity, update it, and save.
-            Doctor existingDoctor = doctorRepository.findById(doctor.getDoctorId())
-                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
-
-            existingDoctor.setDoctorName(doctor.getDoctorName());
-            existingDoctor.setContactNumber(doctor.getContactNumber());
-            existingDoctor.setEmail(doctor.getEmail());
-
-            return doctorRepository.save(existingDoctor);
+        Doctor doctor = modelMapper.map(doctorDTO,Doctor.class);
+        if(doctorRepository.existsByDoctorNameAndSpecialization(doctor.getDoctorName(),doctor.getSpecialization())){
+            throw new APIException("Doctor with this name and specialization does not exist.");
         }
+        Doctor saveDoctor = doctorRepository.save(doctor);
+        return modelMapper.map(saveDoctor,DoctorResponseDTO.class);
     }
 
-    public Doctor getDoctorById(Long doctorId) {
+    @Override
+    public DoctorResponseDTO getDoctorById(Long doctorId) {
         Optional<Doctor> doctorOptional = doctorRepository.findByDoctorId(doctorId);
-        if(doctorOptional.isPresent()){
-            return doctorOptional.get();
+        if(doctorOptional.isEmpty()){
+            throw new APIException("Doctor with doctorId " + doctorId + " does not exist.");
         }
-        else{
-            throw new RuntimeException("Doctor not found with id " + doctorId);
-        }
+        return modelMapper.map(doctorOptional,DoctorResponseDTO.class);
     }
 
-    public List<Doctor> getAllDoctor(){
-        return doctorRepository.findAll();
+    @Override
+    public List<DoctorResponseDTO> getAllDoctor(){
+        List<Doctor> doctors = doctorRepository.findAll();
+        if(doctors.isEmpty()){
+            throw new APIException("No Doctor Available");
+        }
+        return doctors.stream()
+                .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
+                .collect(Collectors.toList());
     }
 
-    public Doctor updateDoctor(Long doctorId,Doctor doctor){
-        Doctor existingDoctor = doctorRepository.findByDoctorId(doctorId).
-                orElseThrow(()-> new RuntimeException("Doctor not exist with id:" + doctorId));
+    @Override
+    public DoctorResponseDTO updateDoctor(Long doctorId, DoctorDTO doctorDTO) {
+        Doctor existingDoctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", "doctorId", doctorId));
 
-        existingDoctor.setDoctorName(doctor.getDoctorName());
-        existingDoctor.setEmail(doctor.getEmail());
-        existingDoctor.setContactNumber(doctor.getContactNumber());
+        if(doctorDTO.getDoctorName() != null){
+            existingDoctor.setDoctorName(doctorDTO.getDoctorName());
+        }
+        if(doctorDTO.getQualification() != null){
+            existingDoctor.setQualification(doctorDTO.getQualification());
+        }
+        if(doctorDTO.getSpecialization() != null){
+            existingDoctor.setSpecialization(doctorDTO.getSpecialization());
+        }
+        if(doctorDTO.getYearOfExperience() != null){
+            existingDoctor.setYearOfExperience(doctorDTO.getYearOfExperience());
+        }
+        if(doctorDTO.getAvailableDays() != null){
+            existingDoctor.setAvailableDays(doctorDTO.getAvailableDays());
+        }
+        if(doctorDTO.getClinicAddress() != null){
+            existingDoctor.setClinicAddress(doctorDTO.getClinicAddress());
+        }
+        if(doctorDTO.getEmail() != null){
+            existingDoctor.setEmail(doctorDTO.getEmail());
+        }
 
-        return doctorRepository.save(existingDoctor);
+        doctorRepository.save(existingDoctor);
+        return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
+    }
+
+    @Override
+    public DoctorResponseDTO deleteDoctor(Long doctorId){
+       Doctor existingDoctor = doctorRepository.findByDoctorId(doctorId)
+               .orElseThrow(() -> new ResourceNotFoundException("Doctor","doctorId", doctorId));
+       doctorRepository.deleteById(doctorId);
+       return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
+    }
+
+    @Override
+    public List<DoctorResponseDTO> searchDoctorsBySpecialization(String specialization) {
+        List<Doctor> doctorSpecialization = doctorRepository.findBySpecializationContainingIgnoreCase(specialization);
+        if(doctorSpecialization == null){
+            throw new ResourceNotFoundException("Doctor","Specialization",specialization);
+        }
+
+        return doctorSpecialization.stream()
+                .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DoctorResponseDTO> searchDoctorsByName(String name) {
+        List<Doctor> doctorName = doctorRepository.findByDoctorNameContainingIgnoreCase(name);
+        if(doctorName == null){
+            throw new ResourceNotFoundException("Doctor","Name",name);
+        }
+
+        return doctorName.stream()
+                .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
+                .collect(Collectors.toList());
     }
 
 }
