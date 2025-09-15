@@ -1,5 +1,6 @@
 package com.cognizant.hams.controller;
 
+import com.cognizant.hams.dto.DoctorResponseDTO;
 import com.cognizant.hams.dto.PatientDTO;
 import com.cognizant.hams.dto.PatientResponseDTO;
 import com.cognizant.hams.service.PatientServiceImpl;
@@ -33,7 +34,7 @@ public class PatientController {
 
     @PutMapping("/{patientId}")
     public ResponseEntity<PatientResponseDTO> updatePatient(@PathVariable("patientId") Long patientId,
-                                                            @Valid @RequestBody PatientDTO patientUpdateDTO){
+                                                            @RequestBody PatientDTO patientUpdateDTO){
         PatientResponseDTO existingPatientDTO = patientService.updatePatient(patientId, patientUpdateDTO);
         return new ResponseEntity<>(existingPatientDTO,HttpStatus.OK);
     }
@@ -42,6 +43,13 @@ public class PatientController {
     public ResponseEntity<PatientResponseDTO> deletePatient(@PathVariable("patientId") Long patientId){
         PatientResponseDTO deletePatientDTO = patientService.deletePatient(patientId);
         return new ResponseEntity<>(deletePatientDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/doctorNameAndSpecialization")
+    public ResponseEntity<List<DoctorResponseDTO>> searchDoctors(@RequestParam("name") String name,
+                                                           @RequestParam("specialization") String specialization){
+        List<DoctorResponseDTO> doctors = patientService.searchDoctors(name, specialization);
+        return new ResponseEntity<>(doctors, HttpStatus.OK);
     }
 
 

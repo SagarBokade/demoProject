@@ -1,14 +1,22 @@
 package com.cognizant.hams.service;
 
+import com.cognizant.hams.dto.DoctorResponseDTO;
 import com.cognizant.hams.dto.PatientResponseDTO;
 import com.cognizant.hams.dto.PatientDTO;
+import com.cognizant.hams.entity.Doctor;
 import com.cognizant.hams.entity.Patient;
 import com.cognizant.hams.exception.APIException;
 import com.cognizant.hams.exception.ResourceNotFoundException;
+import com.cognizant.hams.repository.DoctorRepository;
 import com.cognizant.hams.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -17,6 +25,7 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
     private final ModelMapper modelMapper;
+    private final DoctorRepository doctorRepository;
 
 
     @Override
@@ -73,16 +82,50 @@ public class PatientServiceImpl implements PatientService {
                 return modelMapper.map(deletePatient, PatientResponseDTO.class);
     }
 
-//    @Override
-//    public List<DoctorResponseDto> getAllDoctors(){
-//        List<Doctor> doctors= doctor.Repository.finalAll();
-//        if(doctors.isEmpty()){
-//            throw new APIException(("No Doctors Found"));
-//        }
-//
-//        return doctors.stream()
-//                .map(doctor -> modelMapper.map(doctor, DoctorResponseDTO.class))
-//                .collect(Collectors.toList());
-//    }
+    @Override
+    public List<DoctorResponseDTO> getAllDoctors(){
+        List<Doctor> doctors= doctorRepository.findAll();
+        if(doctors.isEmpty()){
+            throw new APIException(("No Doctors Found"));
+        }
 
+        return doctors.stream()
+                .map(doctor -> modelMapper.map(doctor, DoctorResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DoctorResponseDTO> searchDoctorsBySpecialization(String specialization) {
+        List<Doctor> doctorSpecialization = doctorRepository.findBySpecializationContainingIgnoreCase(specialization);
+        if(doctorSpecialization == null){
+            throw new ResourceNotFoundException("Doctor","Specialization",specialization);
+        }
+
+        return doctorSpecialization.stream()
+                .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DoctorResponseDTO> searchDoctorsByName(String name) {
+        List<Doctor> doctorName = doctorRepository.findByDoctorNameContainingIgnoreCase(name);
+        if(doctorName == null){
+            throw new ResourceNotFoundException("Doctor","Name",name);
+        }
+
+        return doctorName.stream()
+                .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DoctorResponseDTO> searchDoctors(String name, String specialization){
+        List<Doctor> doctors = doctorRepository.findByDoctorNameAndSpecializationContainingIgnoreCase(name, specialization);
+        if(doctors.isEmpty()){
+            throw new APIException("No Doctor found");
+        }
+        return doctors.stream()
+                .map(doctor -> modelMapper.map(doctor, DoctorResponseDTO.class))
+                .collect(Collectors.toList());
+    }
 }

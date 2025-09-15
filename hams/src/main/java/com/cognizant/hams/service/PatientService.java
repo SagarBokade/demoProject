@@ -1,7 +1,10 @@
 package com.cognizant.hams.service;
 
+import com.cognizant.hams.dto.DoctorResponseDTO;
 import com.cognizant.hams.dto.PatientDTO;
 import com.cognizant.hams.dto.PatientResponseDTO;
+
+import java.util.List;
 
 public interface PatientService {
     PatientResponseDTO createPatient(PatientDTO patientCreateDTO);
@@ -10,10 +13,11 @@ public interface PatientService {
     PatientResponseDTO deletePatient(Long patientId);
 
     //    --- Doctor Search (from patient perspective) ---
-//    List<DoctorResponseDTO> getAllDoctors();
-//    List<DoctorResponseDTO> searchDoctorByName(String name);
-//    List<DoctorResponseDTO> searchDoctorBySpecialization(String specialization);
-//    List<DoctorResponseDTO> searchDoctors(String name, String specialization);
+    List<DoctorResponseDTO> getAllDoctors();
+    List<DoctorResponseDTO> searchDoctorsBySpecialization(String specialization);
+
+    List<DoctorResponseDTO> searchDoctorsByName(String name);
+    List<DoctorResponseDTO> searchDoctors(String name, String specialization);
 
 //  --- Appointments ---
 //    AppointmentResponseDTO getAppointmentById(Long appointmentId);
