@@ -1,4 +1,4 @@
 package com.cognizant.hams.service;
 
-public class AdminService {
+public interface AdminService {
 }

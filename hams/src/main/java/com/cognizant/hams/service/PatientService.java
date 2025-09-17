@@ -1,5 +1,6 @@
 package com.cognizant.hams.service;
 
+<<<<<<< HEAD
 import com.cognizant.hams.dto.*;
 
 import java.util.List;
@@ -38,4 +39,7 @@ public interface PatientService {
 
 //    --- Doctor Availability (helper) ---
 //    List<AvailabilityDTO> getDoctorAvailability(Long doctorId);
+=======
+public interface PatientService {
+>>>>>>> 61e547713e2f1a59365f2ea5c01a90c387501906
 }
