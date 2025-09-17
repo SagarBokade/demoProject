@@ -15,4 +15,9 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "roleId")
     private Role role;
+
+    public String getPatientId() {
+
+        return "";
+    }
 }

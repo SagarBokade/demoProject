@@ -1,4 +1,8 @@
 package com.cognizant.hams.repository;
 
-public class UserRepository {
+import com.cognizant.hams.entity.User;
+import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, String> {
 }

@@ -1,8 +1,8 @@
-package com.cognizant.hams.entity;
+package com.cognizant.hams.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
@@ -10,30 +10,18 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 import java.util.Date;
 
-@Entity
-@Table(name = "patients")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Patient {
-    // Inside Patient.java
+public class PatientDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long patientId;
-
-    @OneToOne
-    @JoinColumn(name = "userId")
-    private User user;
-
-    @NotBlank(message = "Name is required")
-    private String name;
-
+// this DTO is used for the requesting body when creating a new patient
+@NotBlank(message = "Name is required")
+private String name;
     @Past
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("dateOfBirth")
@@ -49,9 +37,12 @@ public class Patient {
     @Column(unique = true)
     private String email;
 
-//    private String status;
+ //   private String status;
 
     @NotBlank(message = "Address is required")
-    private String Address;
+    private String address;
+
     private String bloodGroup;
 }
+
+
