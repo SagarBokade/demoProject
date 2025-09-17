@@ -1,0 +1,20 @@
+package com.cognizant.hams.dto.Response;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class DoctorAvailabilityResponseDTO {
+    private Long availabilityId;
+    private Long doctorId;
+    private LocalDate availableDate;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private boolean available;
+}

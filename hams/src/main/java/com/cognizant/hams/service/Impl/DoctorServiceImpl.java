@@ -1,11 +1,18 @@
-package com.cognizant.hams.service;
+package com.cognizant.hams.service.Impl;
 
-import com.cognizant.hams.dto.DoctorDTO;
-import com.cognizant.hams.dto.DoctorResponseDTO;
+import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
+import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
+import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
+import com.cognizant.hams.dto.Request.DoctorDTO;
+import com.cognizant.hams.dto.Response.DoctorResponseDTO;
 import com.cognizant.hams.entity.Doctor;
+import com.cognizant.hams.entity.DoctorAvailability;
 import com.cognizant.hams.exception.APIException;
 import com.cognizant.hams.exception.ResourceNotFoundException;
+import com.cognizant.hams.repository.DoctorAvailabilityRepository;
 import com.cognizant.hams.repository.DoctorRepository;
+import com.cognizant.hams.service.DoctorService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -20,6 +27,8 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
 
+    private final DoctorAvailabilityRepository doctorAvailabilityRepository;
+
     private final ModelMapper modelMapper;
 
 //    private SpecializationRepository specializationRepository;
@@ -28,6 +37,8 @@ public class DoctorServiceImpl implements DoctorService {
 //        this.doctorRepository = doctorRepository;
 //        this.specializationRepository = specializationRepository;
 //    }
+
+    // Create Doctor
 
     @Override
     public DoctorResponseDTO createDoctor(DoctorDTO doctorDTO) {
@@ -42,6 +53,8 @@ public class DoctorServiceImpl implements DoctorService {
         return modelMapper.map(saveDoctor,DoctorResponseDTO.class);
     }
 
+    // Get Doctor By I'd:
+
     @Override
     public DoctorResponseDTO getDoctorById(Long doctorId) {
         Optional<Doctor> doctorOptional = doctorRepository.findByDoctorId(doctorId);
@@ -50,6 +63,8 @@ public class DoctorServiceImpl implements DoctorService {
         }
         return modelMapper.map(doctorOptional,DoctorResponseDTO.class);
     }
+
+    // Get All Doctor
 
     @Override
     public List<DoctorResponseDTO> getAllDoctor(){
@@ -61,6 +76,8 @@ public class DoctorServiceImpl implements DoctorService {
                 .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
                 .collect(Collectors.toList());
     }
+
+    // Update Doctor
 
     @Override
     public DoctorResponseDTO updateDoctor(Long doctorId, DoctorDTO doctorDTO) {
@@ -79,9 +96,6 @@ public class DoctorServiceImpl implements DoctorService {
         if(doctorDTO.getYearOfExperience() != null){
             existingDoctor.setYearOfExperience(doctorDTO.getYearOfExperience());
         }
-        if(doctorDTO.getAvailableDays() != null){
-            existingDoctor.setAvailableDays(doctorDTO.getAvailableDays());
-        }
         if(doctorDTO.getClinicAddress() != null){
             existingDoctor.setClinicAddress(doctorDTO.getClinicAddress());
         }
@@ -93,6 +107,8 @@ public class DoctorServiceImpl implements DoctorService {
         return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
     }
 
+    // Delete Doctor
+
     @Override
     public DoctorResponseDTO deleteDoctor(Long doctorId){
        Doctor existingDoctor = doctorRepository.findByDoctorId(doctorId)
@@ -100,6 +116,8 @@ public class DoctorServiceImpl implements DoctorService {
        doctorRepository.deleteById(doctorId);
        return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
     }
+
+    // Search Doctors By Specialization
 
     @Override
     public List<DoctorResponseDTO> searchDoctorsBySpecialization(String specialization) {
@@ -113,6 +131,8 @@ public class DoctorServiceImpl implements DoctorService {
                 .collect(Collectors.toList());
     }
 
+    // Search Doctors By Name
+
     @Override
     public List<DoctorResponseDTO> searchDoctorsByName(String name) {
         List<Doctor> doctorName = doctorRepository.findByDoctorNameContainingIgnoreCase(name);
@@ -123,6 +143,75 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorName.stream()
                 .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    //Doctor Availability CURD Operations:
+
+    // Add Availability
+
+    @Override
+    @Transactional
+    public DoctorAvailabilityResponseDTO addAvailability(Long doctorId, DoctorAvailabilityDTO slotDto) {
+        Doctor doctor = doctorRepository.findByDoctorId(doctorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", "doctorId", doctorId));
+
+        DoctorAvailability doctorAvailability = modelMapper.map(slotDto, DoctorAvailability.class);
+        doctorAvailability.setDoctor(doctor);
+
+        DoctorAvailability savedAvailability = doctorAvailabilityRepository.save(doctorAvailability);
+        return modelMapper.map(savedAvailability, DoctorAvailabilityResponseDTO.class);
+    }
+
+    // Get Availability
+
+    @Override
+    public List<DoctorAvailabilityResponseDTO> getAvailability(Long doctorId) {
+        List<DoctorAvailability> availabilities = doctorAvailabilityRepository.findByDoctorDoctorId(doctorId);
+        return availabilities.stream()
+                .map(availability -> modelMapper.map(availability, DoctorAvailabilityResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    // Delete Availability Slot
+
+    @Override
+    @Transactional
+    public DoctorAvailabilityResponseDTO updateAvailabilitySlot(Long doctorId, Long availabilityId, DoctorAvailabilityDTO doctorAvailabilityDTO) {
+        DoctorAvailability existingAvailability = doctorAvailabilityRepository.findById(availabilityId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", "availabilityId", availabilityId));
+
+        if(doctorAvailabilityDTO.getAvailableDate() != null){
+            existingAvailability.setAvailableDate(doctorAvailabilityDTO.getAvailableDate());
+        }
+        if(doctorAvailabilityDTO.getStartTime() != null){
+            existingAvailability.setStartTime(doctorAvailabilityDTO.getStartTime());
+        }
+        if(doctorAvailabilityDTO.getEndTime() != null){
+            existingAvailability.setEndTime(doctorAvailabilityDTO.getEndTime());
+        }
+        if(doctorAvailabilityDTO.isAvailable()){
+            existingAvailability.setAvailable(true);
+        }
+        System.out.println(existingAvailability);
+        doctorAvailabilityRepository.save(existingAvailability);
+        return modelMapper.map(existingAvailability, DoctorAvailabilityResponseDTO.class);
+    }
+
+//    @Override
+//    @Transactional
+//    public DoctorAvailabilityResponseDTO searchAvailabilityByDoctor(String doctorName){
+//
+//    }
+
+    @Override
+    public List<DoctorAndAvailabilityResponseDTO> getAvailableDoctor(String doctorName){
+        return doctorRepository.findByAvailableDoctorNameAndAvailability(doctorName);
+    }
+
+
+    @Override
+    public List<DoctorAndAvailabilityResponseDTO> searchDoctorByName(String doctorName){
+        return doctorRepository.findByDoctorNameAndAvailability(doctorName);
     }
 
 }

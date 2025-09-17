@@ -1,4 +1,4 @@
 package com.cognizant.hams.service;
 
-public class PrescriptionService {
+public interface PrescriptionService {
 }
