@@ -1,12 +1,10 @@
 package com.cognizant.hams.controller;
 
-import com.cognizant.hams.dto.DoctorResponseDTO;
 import com.cognizant.hams.dto.PatientDTO;
 import com.cognizant.hams.dto.PatientResponseDTO;
 import com.cognizant.hams.service.PatientServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

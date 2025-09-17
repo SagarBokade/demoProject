@@ -8,7 +8,6 @@ import com.cognizant.hams.entity.Patient;
 import com.cognizant.hams.exception.APIException;
 import com.cognizant.hams.exception.ResourceNotFoundException;
 import com.cognizant.hams.repository.AppointmentRepository;
-import com.cognizant.hams.repository.DoctorRepository;
 import com.cognizant.hams.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
