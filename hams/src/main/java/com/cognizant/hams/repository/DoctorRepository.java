@@ -12,8 +12,6 @@ import java.util.Optional;
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
-    Doctor findByDoctorName(@NotBlank @Size(min = 2, message = "Enter valid name") String doctorName);
-
     Optional<Doctor> findByDoctorId(@NotBlank Long doctorId);
 
     boolean existsByDoctorNameAndSpecialization(@NotBlank(message = "Doctor name is required")
@@ -26,5 +24,5 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     List<Doctor> findByDoctorNameContainingIgnoreCase(@NotBlank(message = "Doctor name is required")
                                                       @Size(min = 3, max = 25, message = "Name must be between 3 and 25 characters") String name);
 
-    List<Doctor> findByDoctorNameAndSpecializationContainingIgnoreCase(String name, String specialization);
+    List<Doctor> findByDoctorNameContainingIgnoreCaseAndSpecializationContainingIgnoreCase(String name, String specialization);
 }

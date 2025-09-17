@@ -18,6 +18,7 @@ public interface DoctorService {
     // Domain Specific
     List<DoctorResponseDTO> searchDoctorsBySpecialization(String specialization);
     List<DoctorResponseDTO> searchDoctorsByName(String name);
+    List<DoctorResponseDTO> searchDoctorsByNameAndSpecialization(String name, String specialization);
 
 //
 //    // Avaialability Management

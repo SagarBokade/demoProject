@@ -125,4 +125,28 @@ public class DoctorServiceImpl implements DoctorService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<DoctorResponseDTO> searchDoctorsByNameAndSpecialization(String name, String specialization) {
+        List<Doctor> doctors;
+
+        if (name != null && !name.trim().isEmpty() && specialization != null && !specialization.trim().isEmpty()) {
+            doctors = doctorRepository.findByDoctorNameContainingIgnoreCaseAndSpecializationContainingIgnoreCase(name, specialization);
+        } else if (name != null && !name.trim().isEmpty()) {
+            doctors = doctorRepository.findByDoctorNameContainingIgnoreCase(name);
+        } else if (specialization != null && !specialization.trim().isEmpty()) {
+            doctors = doctorRepository.findBySpecializationContainingIgnoreCase(specialization);
+        } else {
+            doctors = doctorRepository.findAll();
+        }
+
+        if (doctors.isEmpty()) {
+            throw new APIException("No doctors found with the specified criteria.");
+        }
+
+        return doctors.stream()
+                .map(doctor -> modelMapper.map(doctor, DoctorResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
+
 }
