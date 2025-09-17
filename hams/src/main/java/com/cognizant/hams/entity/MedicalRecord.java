@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class MedicalRecord {
     @Id
-    private Long recordId;
+    private String recordId;
 
     @ManyToOne
     @JoinColumn(name = "patientId")

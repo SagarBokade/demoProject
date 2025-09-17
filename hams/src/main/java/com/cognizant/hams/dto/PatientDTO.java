@@ -40,7 +40,7 @@ private String name;
  //   private String status;
 
     @NotBlank(message = "Address is required")
-    private String address;
+    private String Address;
 
     private String bloodGroup;
 }

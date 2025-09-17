@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 public class Prescription {
     @Id
-    private Long prescriptionId;
+    private String prescriptionId;
 
     @ManyToOne
     @JoinColumn(name = "recordId")

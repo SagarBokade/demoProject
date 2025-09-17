@@ -46,27 +46,9 @@ public class PatientController {
     }
 
     @GetMapping("/doctorNameAndSpecialization")
-    public ResponseEntity<List<DoctorResponseDTO>> searchDoctorByNameAndSpecialization(@RequestParam("name") String name,
+    public ResponseEntity<List<DoctorResponseDTO>> searchDoctors(@RequestParam("name") String name,
                                                            @RequestParam("specialization") String specialization){
-        List<DoctorResponseDTO> doctors = patientService.searchDoctorsByNameAndSpecialization(name, specialization);
-        return new ResponseEntity<>(doctors, HttpStatus.OK);
-    }
-
-    @GetMapping("/doctorName")
-    public ResponseEntity<List<DoctorResponseDTO>> searchDoctorByName(@RequestParam("name") String name){
-        List<DoctorResponseDTO> doctors = patientService.searchDoctorByName(name);
-        return new ResponseEntity<>(doctors, HttpStatus.OK);
-    }
-
-    @GetMapping("/doctorSpecialization")
-    public ResponseEntity<List<DoctorResponseDTO>> searchDoctorBySpecialization(@RequestParam("specialization") String specialization){
-        List<DoctorResponseDTO> doctors = patientService.searchDoctorBySpecialization(specialization);
-        return new ResponseEntity<>(doctors, HttpStatus.OK);
-    }
-
-    @GetMapping("/allDoctors")
-    public ResponseEntity<List<DoctorResponseDTO>> getAllDoctors(){
-        List<DoctorResponseDTO> doctors = patientService.getAllDoctors();
+        List<DoctorResponseDTO> doctors = patientService.searchDoctors(name, specialization);
         return new ResponseEntity<>(doctors, HttpStatus.OK);
     }
 

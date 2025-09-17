@@ -2,43 +2,25 @@ package com.cognizant.hams.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "appointments")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Appointment {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long appointmentId;
+    private String appointmentId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "patientId")
     private Patient patient;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "doctor_id" , nullable = false)
+    @OneToOne
+    @JoinColumn(name = "doctorId")
     private Doctor doctor;
 
-    @Column(name = "appointment_date", nullable = false)
-    private LocalDate appointmentDate;
-
-    @Column(name = "start_time", nullable = false)
-    private LocalTime startTime;
-
-    @Column(name = "end_time", nullable = false)
-    private LocalTime endTime;
-
-    private String reason;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AppointmentStatus status;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
+    private Integer duration;
+    private String status;
 }

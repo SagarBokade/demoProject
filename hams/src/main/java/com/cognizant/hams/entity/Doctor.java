@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long doctorId;
+    private long doctorId;
 
     @OneToOne
     @JoinColumn(name = "userId")
