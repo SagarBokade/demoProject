@@ -1,4 +1,4 @@
-package com.cognizant.hams.dto;
+package com.cognizant.hams.dto.Request;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -18,8 +18,8 @@ public class DoctorDTO {
     @NotBlank(message = "Specialization is required")
     private String specialization;
 
-    @NotBlank(message = "Available days are required")
-    private String availableDays;
+//    @NotBlank(message = "Available days are required")
+//    private String availableDays;
 
     @NotBlank(message = "Clinic address is required")
     private String clinicAddress;

@@ -1,4 +1,4 @@
 package com.cognizant.hams.service;
 
-public class AuthService {
+public interface AuthService {
 }
