@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.LinkedTransferQueue;
 
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
@@ -42,5 +43,11 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             "on d.doctor_id = a.doctor_id\n" +
             "where doctor_name = :doctorName", nativeQuery = true)
     List<DoctorAndAvailabilityResponseDTO> findByDoctorNameAndAvailability(String doctorName);
+
+//    @Query(value = "select a.appointment_id,d_doctor_name from appointments a\n" +
+//            "join doctors d\n" +
+//            "on a.doctor_id = d.doctor_id\n" +
+//            "where a.appointment_id = :appointmentId;", nativeQuery = true)
+//    List<AppointmentResponseDTO> findByAppointmentByAppointmentId(Long appointmentId);
 
 }
