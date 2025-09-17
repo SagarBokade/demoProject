@@ -94,7 +94,12 @@ public class DoctorController {
         List<DoctorAndAvailabilityResponseDTO> doctorAndAvailabilityResponseDTOList = doctorService.searchDoctorByName(doctorName);
         return new ResponseEntity<>(doctorAndAvailabilityResponseDTOList, HttpStatus.OK);
     }
-
+//
+//    @GetMapping("/appointmentId")
+//    public ResponseEntity<List<AppointmentResponseDTO>> getAppointmentByAppointmentId(@RequestParam("appointmentId") Long appointmentId){
+//        List<AppointmentResponseDTO> appointmentResponseDTOList = doctorService.searchDoctorByName(appointmentId);
+//        return new ResponseEntity<>(appointmentResponseDTOList, HttpStatus.OK);
+//    }
 
 
 }
