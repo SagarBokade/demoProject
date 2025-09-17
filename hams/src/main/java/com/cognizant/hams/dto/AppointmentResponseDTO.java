@@ -1,5 +1,6 @@
 package com.cognizant.hams.dto;
 
+import com.cognizant.hams.dto.Response.DoctorResponseDTO;
 import com.cognizant.hams.entity.AppointmentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;

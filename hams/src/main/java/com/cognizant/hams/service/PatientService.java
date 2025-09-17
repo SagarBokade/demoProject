@@ -1,20 +1,26 @@
 package com.cognizant.hams.service;
 
-<<<<<<< HEAD
 import com.cognizant.hams.dto.*;
+import com.cognizant.hams.dto.Response.DoctorResponseDTO;
 
 import java.util.List;
 
 public interface PatientService {
     PatientResponseDTO createPatient(PatientDTO patientCreateDTO);
+
     PatientResponseDTO getPatientById(Long patientId);
+
     PatientResponseDTO updatePatient(Long patientId, PatientDTO patientUpdateDTO);
+
     PatientResponseDTO deletePatient(Long patientId);
 
     //    --- Doctor Search (from patient perspective) ---
     List<DoctorResponseDTO> getAllDoctors();
-    List<DoctorResponseDTO> searchDoctorsByNameAndSpecialization(String name, String specialization);
+
+//    List<DoctorResponseDTO> searchDoctorsByNameAndSpecialization(String name, String specialization);
+
     List<DoctorResponseDTO> searchDoctorByName(String name);
+
     List<DoctorResponseDTO> searchDoctorBySpecialization(String specialization);
 
     AppointmentResponseDTO bookAppointment(Long patientId, AppointmentDTO appointmentDTO);
@@ -27,7 +33,7 @@ public interface PatientService {
 
     List<AppointmentResponseDTO> getAppointmentsForPatient(Long patientId);
 
-
+}
 //    AppointmentResponseDTO bookAppointment(Long patientId, AppointmentDTO appointmentDTO);
 //    AppointmentResponseDTO cancelAppointment(Long appointmentId);
 
@@ -39,7 +45,3 @@ public interface PatientService {
 
 //    --- Doctor Availability (helper) ---
 //    List<AvailabilityDTO> getDoctorAvailability(Long doctorId);
-=======
-public interface PatientService {
->>>>>>> 61e547713e2f1a59365f2ea5c01a90c387501906
-}

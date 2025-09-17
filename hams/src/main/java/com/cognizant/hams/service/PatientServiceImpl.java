@@ -1,6 +1,7 @@
 package com.cognizant.hams.service;
 
 import com.cognizant.hams.dto.*;
+import com.cognizant.hams.dto.Response.DoctorResponseDTO;
 import com.cognizant.hams.entity.Appointment;
 import com.cognizant.hams.entity.AppointmentStatus;
 import com.cognizant.hams.entity.Doctor;
@@ -8,6 +9,7 @@ import com.cognizant.hams.entity.Patient;
 import com.cognizant.hams.exception.APIException;
 import com.cognizant.hams.exception.ResourceNotFoundException;
 import com.cognizant.hams.repository.AppointmentRepository;
+import com.cognizant.hams.repository.DoctorRepository;
 import com.cognizant.hams.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -87,10 +89,10 @@ public class PatientServiceImpl implements PatientService {
         return doctorService.getAllDoctor();
     }
 
-    @Override
-    public List<DoctorResponseDTO> searchDoctorsByNameAndSpecialization(String name, String specialization) {
-        return doctorService.searchDoctorsByNameAndSpecialization(name, specialization);
-    }
+//    @Override
+//    public List<DoctorResponseDTO> searchDoctorsByNameAndSpecialization(String name, String specialization) {
+//        return doctorService.searchDoctorsByNameAndSpecialization(name, specialization);
+//    }
 
     @Override
     public List<DoctorResponseDTO> searchDoctorByName(String name) {

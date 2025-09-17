@@ -31,4 +31,6 @@ public interface DoctorService {
     List<DoctorAndAvailabilityResponseDTO> getAvailableDoctor(String doctorName);
 
     List<DoctorAndAvailabilityResponseDTO> searchDoctorByName(String doctorName);
+
+//    List<AppointmentResponseDTO> getAppointmentByAppointmentId(Long appointmentId);
 }

@@ -2,6 +2,7 @@ package com.cognizant.hams.controller;
 
 import com.cognizant.hams.dto.PatientDTO;
 import com.cognizant.hams.dto.PatientResponseDTO;
+import com.cognizant.hams.dto.Response.DoctorResponseDTO;
 import com.cognizant.hams.service.PatientServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,12 +44,12 @@ public class PatientController {
         return new ResponseEntity<>(deletePatientDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/doctorNameAndSpecialization")
-    public ResponseEntity<List<DoctorResponseDTO>> searchDoctorByNameAndSpecialization(@RequestParam("name") String name,
-                                                           @RequestParam("specialization") String specialization){
-        List<DoctorResponseDTO> doctors = patientService.searchDoctorsByNameAndSpecialization(name, specialization);
-        return new ResponseEntity<>(doctors, HttpStatus.OK);
-    }
+//    @GetMapping("/doctorNameAndSpecialization")
+//    public ResponseEntity<List<DoctorResponseDTO>> searchDoctorByNameAndSpecialization(@RequestParam("name") String name,
+//                                                           @RequestParam("specialization") String specialization){
+//        List<DoctorResponseDTO> doctors = patientService.searchDoctorsByNameAndSpecialization(name, specialization);
+//        return new ResponseEntity<>(doctors, HttpStatus.OK);
+//    }
 
     @GetMapping("/doctorName")
     public ResponseEntity<List<DoctorResponseDTO>> searchDoctorByName(@RequestParam("name") String name){
