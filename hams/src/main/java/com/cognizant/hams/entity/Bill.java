@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 public class Bill {
     @Id
-    private String billId;
+    private Long billId;
 
     @OneToOne
     @JoinColumn(name = "appointmentId")

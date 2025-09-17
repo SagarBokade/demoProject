@@ -1,20 +1,19 @@
 package com.cognizant.hams.service;
 
-import com.cognizant.hams.dto.DoctorResponseDTO;
-import com.cognizant.hams.dto.PatientResponseDTO;
-import com.cognizant.hams.dto.PatientDTO;
+import com.cognizant.hams.dto.*;
+import com.cognizant.hams.entity.Appointment;
+import com.cognizant.hams.entity.AppointmentStatus;
 import com.cognizant.hams.entity.Doctor;
 import com.cognizant.hams.entity.Patient;
 import com.cognizant.hams.exception.APIException;
 import com.cognizant.hams.exception.ResourceNotFoundException;
+import com.cognizant.hams.repository.AppointmentRepository;
 import com.cognizant.hams.repository.DoctorRepository;
 import com.cognizant.hams.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +25,8 @@ public class PatientServiceImpl implements PatientService {
     private final PatientRepository patientRepository;
     private final ModelMapper modelMapper;
     private final DoctorRepository doctorRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final DoctorService doctorService;
 
 
     @Override
@@ -78,54 +79,124 @@ public class PatientServiceImpl implements PatientService {
     public PatientResponseDTO deletePatient(Long patientId){
         Patient deletePatient = patientRepository.findById(patientId)
                 .orElseThrow(()-> new ResourceNotFoundException("Patient", "patientID", patientId));
-                patientRepository.delete(deletePatient);
-                return modelMapper.map(deletePatient, PatientResponseDTO.class);
+        patientRepository.delete(deletePatient);
+        return modelMapper.map(deletePatient, PatientResponseDTO.class);
     }
 
     @Override
     public List<DoctorResponseDTO> getAllDoctors(){
-        List<Doctor> doctors= doctorRepository.findAll();
-        if(doctors.isEmpty()){
-            throw new APIException(("No Doctors Found"));
-        }
-
-        return doctors.stream()
-                .map(doctor -> modelMapper.map(doctor, DoctorResponseDTO.class))
-                .collect(Collectors.toList());
+        return doctorService.getAllDoctor();
     }
 
     @Override
-    public List<DoctorResponseDTO> searchDoctorsBySpecialization(String specialization) {
-        List<Doctor> doctorSpecialization = doctorRepository.findBySpecializationContainingIgnoreCase(specialization);
-        if(doctorSpecialization == null){
-            throw new ResourceNotFoundException("Doctor","Specialization",specialization);
-        }
-
-        return doctorSpecialization.stream()
-                .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
-                .collect(Collectors.toList());
+    public List<DoctorResponseDTO> searchDoctorsByNameAndSpecialization(String name, String specialization) {
+        return doctorService.searchDoctorsByNameAndSpecialization(name, specialization);
     }
 
     @Override
-    public List<DoctorResponseDTO> searchDoctorsByName(String name) {
-        List<Doctor> doctorName = doctorRepository.findByDoctorNameContainingIgnoreCase(name);
-        if(doctorName == null){
-            throw new ResourceNotFoundException("Doctor","Name",name);
-        }
-
-        return doctorName.stream()
-                .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
-                .collect(Collectors.toList());
+    public List<DoctorResponseDTO> searchDoctorByName(String name) {
+        return doctorService.searchDoctorsByName(name);
     }
 
     @Override
-    public List<DoctorResponseDTO> searchDoctors(String name, String specialization){
-        List<Doctor> doctors = doctorRepository.findByDoctorNameAndSpecializationContainingIgnoreCase(name, specialization);
-        if(doctors.isEmpty()){
-            throw new APIException("No Doctor found");
+    public List<DoctorResponseDTO> searchDoctorBySpecialization(String specialization) {
+        return doctorService.searchDoctorsBySpecialization(specialization);
+    }
+
+
+    @Override
+    public AppointmentResponseDTO bookAppointment(Long patientId, AppointmentDTO appointmentDTO) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", "Id", patientId));
+
+        Doctor doctor = doctorRepository.findById(appointmentDTO.getDoctorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", "Id", appointmentDTO.getDoctorId()));
+
+        // **LOGIC UPDATE HERE**
+        Appointment appointment = new Appointment();
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
+        appointment.setAppointmentDate(appointmentDTO.getAppointmentDate());
+        appointment.setStartTime(appointmentDTO.getStartTime()); // Updated
+        appointment.setEndTime(appointmentDTO.getEndTime());     // Updated
+        appointment.setReason(appointmentDTO.getReason());
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
+
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        return modelMapper.map(savedAppointment, AppointmentResponseDTO.class);
+    }
+
+    @Override
+    public AppointmentResponseDTO updateAppointment(Long appointmentId, AppointmentDTO appointmentUpdateDTO) {
+        Appointment existingAppointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment", "Id", appointmentId));
+
+        if (appointmentUpdateDTO.getDoctorId() != null && !existingAppointment.getDoctor().getDoctorId().equals(appointmentUpdateDTO.getDoctorId())) {
+            Doctor newDoctor = doctorRepository.findById(appointmentUpdateDTO.getDoctorId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Doctor", "Id", appointmentUpdateDTO.getDoctorId()));
+            existingAppointment.setDoctor(newDoctor);
         }
-        return doctors.stream()
-                .map(doctor -> modelMapper.map(doctor, DoctorResponseDTO.class))
+
+        // **LOGIC UPDATE HERE**
+        if (appointmentUpdateDTO.getAppointmentDate() != null) {
+            existingAppointment.setAppointmentDate(appointmentUpdateDTO.getAppointmentDate());
+        }
+        if (appointmentUpdateDTO.getStartTime() != null) {
+            existingAppointment.setStartTime(appointmentUpdateDTO.getStartTime()); // Updated
+        }
+        if (appointmentUpdateDTO.getEndTime() != null) {
+            existingAppointment.setEndTime(appointmentUpdateDTO.getEndTime());     // Updated
+        }
+        if (appointmentUpdateDTO.getReason() != null) {
+            existingAppointment.setReason(appointmentUpdateDTO.getReason());
+        }
+
+        Appointment updatedAppointment = appointmentRepository.save(existingAppointment);
+
+        return modelMapper.map(updatedAppointment, AppointmentResponseDTO.class);
+    }
+
+    // ... (The rest of your service methods: cancelAppointment, getAppointmentById, etc. remain unchanged)
+
+    @Override
+    public AppointmentResponseDTO cancelAppointment(Long appointmentId) {
+        // ... (no changes needed here)
+        Appointment appointmentToCancel = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment", "Id", appointmentId));
+
+        if (appointmentToCancel.getStatus() == AppointmentStatus.COMPLETED || appointmentToCancel.getStatus() == AppointmentStatus.CANCELED) {
+            throw new APIException("Appointment cannot be canceled as it is already " + appointmentToCancel.getStatus());
+        }
+
+        appointmentToCancel.setStatus(AppointmentStatus.CANCELED);
+        Appointment canceledAppointment = appointmentRepository.save(appointmentToCancel);
+
+        return modelMapper.map(canceledAppointment, AppointmentResponseDTO.class);
+    }
+
+    @Override
+    public AppointmentResponseDTO getAppointmentById(Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment", "Id", appointmentId));
+        return modelMapper.map(appointment, AppointmentResponseDTO.class);
+    }
+
+    @Override
+    public List<AppointmentResponseDTO> getAppointmentsForPatient(Long patientId) {
+
+        if (!patientRepository.existsById(patientId)) {
+            throw new ResourceNotFoundException("Patient", "Id", patientId);
+        }
+
+        List<Appointment> appointments = appointmentRepository.findByPatient_PatientId(patientId);
+
+        return appointments.stream()
+                .map(appointment -> modelMapper.map(appointment, AppointmentResponseDTO.class))
                 .collect(Collectors.toList());
     }
 }
+
+
+
+
