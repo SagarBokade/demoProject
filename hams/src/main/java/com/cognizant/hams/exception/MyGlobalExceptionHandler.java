@@ -7,12 +7,37 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class MyGlobalExceptionHandler {
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<Object> handleUserAlreadyExistsException(UserAlreadyExistsException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", new Date());
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Object> handleInvalidCredentialsException(InvalidCredentialsException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", new Date());
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleGlobalException(Exception ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", new Date());
+        body.put("message", "An unexpected error occurred: " + ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> myMethodArgumentNotValidException(MethodArgumentNotValidException e){
@@ -51,4 +76,5 @@ public class MyGlobalExceptionHandler {
         APIResponse apiResponse = new APIResponse(message, false);
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
+
 }
