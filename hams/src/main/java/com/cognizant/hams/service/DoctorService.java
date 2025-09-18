@@ -23,7 +23,7 @@ public interface DoctorService {
     List<DoctorResponseDTO> searchDoctorsBySpecialization(String specialization);
     List<DoctorResponseDTO> searchDoctorsByName(String name);
 
-//
+    //
 //    // Availability Management
     DoctorAvailabilityResponseDTO addAvailability(Long doctorId, DoctorAvailabilityDTO slotDto);
     List<DoctorAvailabilityResponseDTO> getAvailability(Long doctorId);
@@ -34,6 +34,4 @@ public interface DoctorService {
     List<DoctorAndAvailabilityResponseDTO> searchDoctorByName(String doctorName);
 
 //    List<AppointmentResponseDTO> getAppointmentByAppointmentId(Long appointmentId);
-    AppointmentResponseDTO confirmAppointment(Long doctorId, Long appointmentId);
-    AppointmentResponseDTO rejectAppointment(Long doctorId, Long appointmentId, String reason);
 }

@@ -56,7 +56,7 @@ public class DoctorServiceImpl implements DoctorService {
         // If an ID is present, treat it as an update.
         Doctor doctor = modelMapper.map(doctorDTO,Doctor.class);
         if(doctorRepository.existsByDoctorNameAndSpecialization(doctor.getDoctorName(),doctor.getSpecialization())){
-            throw new APIException("Doctor with this name and specialization does not exist.");
+            throw new APIException("Doctor with name " + doctorDTO.getDoctorName() + " and specialization " + doctorDTO.getSpecialization() + " already exist.");
         }
         Doctor saveDoctor = doctorRepository.save(doctor);
         return modelMapper.map(saveDoctor,DoctorResponseDTO.class);
@@ -120,10 +120,10 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public DoctorResponseDTO deleteDoctor(Long doctorId){
-       Doctor existingDoctor = doctorRepository.findByDoctorId(doctorId)
-               .orElseThrow(() -> new ResourceNotFoundException("Doctor","doctorId", doctorId));
-       doctorRepository.deleteById(doctorId);
-       return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
+        Doctor existingDoctor = doctorRepository.findByDoctorId(doctorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor","doctorId", doctorId));
+        doctorRepository.deleteById(doctorId);
+        return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
     }
 
     // Search Doctors By Specialization
@@ -227,33 +227,5 @@ public class DoctorServiceImpl implements DoctorService {
 //    public List<AppointmentResponseDTO> getAppointmentByAppointmentId(Long appointmentId){
 //        return doctorRepository.findByAppointmentByAppointmentId(appointmentId);
 //    }
-
-    @Override
-    @Transactional
-    public AppointmentResponseDTO confirmAppointment(Long doctorId, Long appointmentId) {
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment", "id", appointmentId));
-        if(!appointment.getDoctor().getDoctorId().equals(doctorId)){
-            throw new APIException("Doctor is not authorized to update this appointment");
-        }
-        appointment.setStatus(AppointmentStatus.CONFIRMED);
-        Appointment saved = appointmentRepository.save(appointment);
-        notificationService.notifyPatientOnAppointmentDecision(saved, true, null);
-        return modelMapper.map(saved, AppointmentResponseDTO.class);
-    }
-
-    @Override
-    @Transactional
-    public AppointmentResponseDTO rejectAppointment(Long doctorId, Long appointmentId, String reason) {
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment", "id", appointmentId));
-        if(!appointment.getDoctor().getDoctorId().equals(doctorId)){
-            throw new APIException("Doctor is not authorized to update this appointment");
-        }
-        appointment.setStatus(AppointmentStatus.REJECTED);
-        Appointment saved = appointmentRepository.save(appointment);
-        notificationService.notifyPatientOnAppointmentDecision(saved, false, reason);
-        return modelMapper.map(saved, AppointmentResponseDTO.class);
-    }
 
 }
