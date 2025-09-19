@@ -1,11 +1,14 @@
 package com.cognizant.hams.controller;
 
+import com.cognizant.hams.dto.AppointmentResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
+import com.cognizant.hams.entity.Notification;
 import com.cognizant.hams.service.DoctorService;
+import com.cognizant.hams.service.NotificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,7 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final NotificationService notificationService;
 
     @PostMapping
     public ResponseEntity<DoctorResponseDTO> createDoctor(@Valid @RequestBody DoctorDTO doctorDTO){
@@ -94,12 +98,4 @@ public class DoctorController {
         List<DoctorAndAvailabilityResponseDTO> doctorAndAvailabilityResponseDTOList = doctorService.searchDoctorByName(doctorName);
         return new ResponseEntity<>(doctorAndAvailabilityResponseDTOList, HttpStatus.OK);
     }
-//
-//    @GetMapping("/appointmentId")
-//    public ResponseEntity<List<AppointmentResponseDTO>> getAppointmentByAppointmentId(@RequestParam("appointmentId") Long appointmentId){
-//        List<AppointmentResponseDTO> appointmentResponseDTOList = doctorService.searchDoctorByName(appointmentId);
-//        return new ResponseEntity<>(appointmentResponseDTOList, HttpStatus.OK);
-//    }
-
-
 }
