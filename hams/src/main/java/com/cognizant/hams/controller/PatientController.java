@@ -3,7 +3,8 @@ package com.cognizant.hams.controller;
 import com.cognizant.hams.dto.PatientDTO;
 import com.cognizant.hams.dto.PatientResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
-import com.cognizant.hams.service.PatientServiceImpl;
+import com.cognizant.hams.service.NotificationService;
+import com.cognizant.hams.service.Impl.PatientServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ public class PatientController {
 
 
     private final PatientServiceImpl patientService;
+    private final NotificationService notificationService;
 
     @PostMapping
     public ResponseEntity<PatientResponseDTO> createPatient(@Valid @RequestBody PatientDTO createDTO){
@@ -68,10 +70,6 @@ public class PatientController {
         List<DoctorResponseDTO> doctors = patientService.getAllDoctors();
         return new ResponseEntity<>(doctors, HttpStatus.OK);
     }
-
-
-
-
 }
 
 

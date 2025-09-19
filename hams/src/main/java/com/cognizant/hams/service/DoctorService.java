@@ -1,5 +1,6 @@
 package com.cognizant.hams.service;
 
+import com.cognizant.hams.dto.AppointmentResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
@@ -22,7 +23,7 @@ public interface DoctorService {
     List<DoctorResponseDTO> searchDoctorsBySpecialization(String specialization);
     List<DoctorResponseDTO> searchDoctorsByName(String name);
 
-//
+    //
 //    // Availability Management
     DoctorAvailabilityResponseDTO addAvailability(Long doctorId, DoctorAvailabilityDTO slotDto);
     List<DoctorAvailabilityResponseDTO> getAvailability(Long doctorId);

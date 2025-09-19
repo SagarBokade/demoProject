@@ -1,17 +1,22 @@
 package com.cognizant.hams.service.Impl;
 
+import com.cognizant.hams.dto.AppointmentResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
+import com.cognizant.hams.entity.Appointment;
+import com.cognizant.hams.entity.AppointmentStatus;
 import com.cognizant.hams.entity.Doctor;
 import com.cognizant.hams.entity.DoctorAvailability;
 import com.cognizant.hams.exception.APIException;
 import com.cognizant.hams.exception.ResourceNotFoundException;
+import com.cognizant.hams.repository.AppointmentRepository;
 import com.cognizant.hams.repository.DoctorAvailabilityRepository;
 import com.cognizant.hams.repository.DoctorRepository;
 import com.cognizant.hams.service.DoctorService;
+import com.cognizant.hams.service.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -31,6 +36,10 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final ModelMapper modelMapper;
 
+    private final AppointmentRepository appointmentRepository;
+
+    private final NotificationService notificationService;
+
 //    private SpecializationRepository specializationRepository;
 
 //    public DoctorServiceImpl(DoctorRepository doctorRepository, SpecializationRepository specializationRepository){
@@ -47,7 +56,7 @@ public class DoctorServiceImpl implements DoctorService {
         // If an ID is present, treat it as an update.
         Doctor doctor = modelMapper.map(doctorDTO,Doctor.class);
         if(doctorRepository.existsByDoctorNameAndSpecialization(doctor.getDoctorName(),doctor.getSpecialization())){
-            throw new APIException("Doctor with this name and specialization does not exist.");
+            throw new APIException("Doctor with name " + doctorDTO.getDoctorName() + " and specialization " + doctorDTO.getSpecialization() + " already exist.");
         }
         Doctor saveDoctor = doctorRepository.save(doctor);
         return modelMapper.map(saveDoctor,DoctorResponseDTO.class);
@@ -111,10 +120,10 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public DoctorResponseDTO deleteDoctor(Long doctorId){
-       Doctor existingDoctor = doctorRepository.findByDoctorId(doctorId)
-               .orElseThrow(() -> new ResourceNotFoundException("Doctor","doctorId", doctorId));
-       doctorRepository.deleteById(doctorId);
-       return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
+        Doctor existingDoctor = doctorRepository.findByDoctorId(doctorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor","doctorId", doctorId));
+        doctorRepository.deleteById(doctorId);
+        return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
     }
 
     // Search Doctors By Specialization
