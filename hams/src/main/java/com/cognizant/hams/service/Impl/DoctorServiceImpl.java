@@ -1,13 +1,10 @@
 package com.cognizant.hams.service.Impl;
 
-import com.cognizant.hams.dto.AppointmentResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
-import com.cognizant.hams.entity.Appointment;
-import com.cognizant.hams.entity.AppointmentStatus;
 import com.cognizant.hams.entity.Doctor;
 import com.cognizant.hams.entity.DoctorAvailability;
 import com.cognizant.hams.exception.APIException;

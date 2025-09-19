@@ -1,12 +1,10 @@
 package com.cognizant.hams.controller;
 
-import com.cognizant.hams.dto.AppointmentResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
-import com.cognizant.hams.entity.Notification;
 import com.cognizant.hams.service.DoctorService;
 import com.cognizant.hams.service.NotificationService;
 import jakarta.validation.Valid;
