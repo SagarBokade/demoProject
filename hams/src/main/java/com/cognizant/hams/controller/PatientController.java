@@ -3,6 +3,8 @@ package com.cognizant.hams.controller;
 import com.cognizant.hams.dto.PatientDTO;
 import com.cognizant.hams.dto.PatientResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
+import com.cognizant.hams.entity.Notification;
+import com.cognizant.hams.service.NotificationService;
 import com.cognizant.hams.service.PatientServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class PatientController {
 
 
     private final PatientServiceImpl patientService;
+    private final NotificationService notificationService;
 
     @PostMapping
     public ResponseEntity<PatientResponseDTO> createPatient(@Valid @RequestBody PatientDTO createDTO){
@@ -69,9 +72,10 @@ public class PatientController {
         return new ResponseEntity<>(doctors, HttpStatus.OK);
     }
 
-
-
-
+    @GetMapping("/{patientId}/notifications")
+    public ResponseEntity<List<Notification>> getPatientNotifications(@PathVariable Long patientId){
+        return ResponseEntity.ok(notificationService.getNotificationForPatient(patientId));
+    }
 }
 
 

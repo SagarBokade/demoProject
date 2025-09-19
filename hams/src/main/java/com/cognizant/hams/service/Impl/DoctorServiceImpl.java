@@ -6,13 +6,17 @@ import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
+import com.cognizant.hams.entity.Appointment;
+import com.cognizant.hams.entity.AppointmentStatus;
 import com.cognizant.hams.entity.Doctor;
 import com.cognizant.hams.entity.DoctorAvailability;
 import com.cognizant.hams.exception.APIException;
 import com.cognizant.hams.exception.ResourceNotFoundException;
+import com.cognizant.hams.repository.AppointmentRepository;
 import com.cognizant.hams.repository.DoctorAvailabilityRepository;
 import com.cognizant.hams.repository.DoctorRepository;
 import com.cognizant.hams.service.DoctorService;
+import com.cognizant.hams.service.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -31,6 +35,10 @@ public class DoctorServiceImpl implements DoctorService {
     private final DoctorAvailabilityRepository doctorAvailabilityRepository;
 
     private final ModelMapper modelMapper;
+
+    private final AppointmentRepository appointmentRepository;
+
+    private final NotificationService notificationService;
 
 //    private SpecializationRepository specializationRepository;
 
@@ -218,6 +226,34 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public List<AppointmentResponseDTO> getAppointmentByAppointmentId(Long appointmentId){
         return doctorRepository.findByAppointmentByAppointmentId(appointmentId);
+    }
+
+    @Transactional
+    @Override
+    public AppointmentResponseDTO confirmAppointment(Long doctorId, Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment", "id", appointmentId));
+        if(!appointment.getDoctor().getDoctorId().equals(doctorId)){
+            throw new APIException("Doctor is not authorized to update this appointment");
+        }
+        appointment.setStatus(AppointmentStatus.CONFIRMED);
+        Appointment saved = appointmentRepository.save(appointment);
+        notificationService.notifyPatientOnAppointmentDecision(saved, true, null);
+        return modelMapper.map(saved, AppointmentResponseDTO.class);
+    }
+
+    @Transactional
+    @Override
+    public AppointmentResponseDTO rejectAppointment(Long doctorId, Long appointmentId, String reason) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment", "id", appointmentId));
+        if(!appointment.getDoctor().getDoctorId().equals(doctorId)){
+            throw new APIException("Doctor is not authorized to update this appointment");
+        }
+        appointment.setStatus(AppointmentStatus.REJECTED);
+        Appointment saved = appointmentRepository.save(appointment);
+        notificationService.notifyPatientOnAppointmentDecision(saved, false, reason);
+        return modelMapper.map(saved, AppointmentResponseDTO.class);
     }
 
 }

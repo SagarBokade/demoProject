@@ -121,7 +121,7 @@ public class PatientServiceImpl implements PatientService {
         appointment.setStartTime(appointmentDTO.getStartTime()); // Updated
         appointment.setEndTime(appointmentDTO.getEndTime());     // Updated
         appointment.setReason(appointmentDTO.getReason());
-        appointment.setStatus(AppointmentStatus.SCHEDULED);
+        appointment.setStatus(AppointmentStatus.PENDING);
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
