@@ -1,5 +1,6 @@
 package com.cognizant.hams.controller;
 
+import com.cognizant.hams.dto.AppointmentResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
@@ -94,12 +95,12 @@ public class DoctorController {
         List<DoctorAndAvailabilityResponseDTO> doctorAndAvailabilityResponseDTOList = doctorService.searchDoctorByName(doctorName);
         return new ResponseEntity<>(doctorAndAvailabilityResponseDTOList, HttpStatus.OK);
     }
-//
-//    @GetMapping("/appointmentId")
-//    public ResponseEntity<List<AppointmentResponseDTO>> getAppointmentByAppointmentId(@RequestParam("appointmentId") Long appointmentId){
-//        List<AppointmentResponseDTO> appointmentResponseDTOList = doctorService.searchDoctorByName(appointmentId);
-//        return new ResponseEntity<>(appointmentResponseDTOList, HttpStatus.OK);
-//    }
+
+    @GetMapping("/appointmentId")
+    public ResponseEntity<List<AppointmentResponseDTO>> getAppointmentByAppointmentId(@RequestParam("appointmentId") Long appointmentId){
+        List<AppointmentResponseDTO> appointmentResponseDTOList = doctorService.getAppointmentByAppointmentId(appointmentId);
+        return new ResponseEntity<>(appointmentResponseDTOList, HttpStatus.OK);
+    }
 
 
 }

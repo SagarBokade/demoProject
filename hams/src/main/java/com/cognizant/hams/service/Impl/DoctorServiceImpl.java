@@ -1,5 +1,6 @@
 package com.cognizant.hams.service.Impl;
 
+import com.cognizant.hams.dto.AppointmentResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
@@ -214,9 +215,9 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorRepository.findByDoctorNameAndAvailability(doctorName);
     }
 
-//    @Override
-//    public List<AppointmentResponseDTO> getAppointmentByAppointmentId(Long appointmentId){
-//        return doctorRepository.findByAppointmentByAppointmentId(appointmentId);
-//    }
+    @Override
+    public List<AppointmentResponseDTO> getAppointmentByAppointmentId(Long appointmentId){
+        return doctorRepository.findByAppointmentByAppointmentId(appointmentId);
+    }
 
 }

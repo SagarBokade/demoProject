@@ -1,5 +1,6 @@
 package com.cognizant.hams.service;
 
+import com.cognizant.hams.dto.AppointmentResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
@@ -32,5 +33,5 @@ public interface DoctorService {
 
     List<DoctorAndAvailabilityResponseDTO> searchDoctorByName(String doctorName);
 
-//    List<AppointmentResponseDTO> getAppointmentByAppointmentId(Long appointmentId);
+    List<AppointmentResponseDTO> getAppointmentByAppointmentId(Long appointmentId);
 }
