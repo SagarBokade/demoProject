@@ -1,5 +1,6 @@
 package com.cognizant.hams.repository;
 
+import com.cognizant.hams.dto.AppointmentResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.entity.Doctor;
 import jakarta.validation.constraints.NotBlank;
@@ -44,10 +45,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             "where doctor_name = :doctorName", nativeQuery = true)
     List<DoctorAndAvailabilityResponseDTO> findByDoctorNameAndAvailability(String doctorName);
 
-//    @Query(value = "select a.appointment_id,d_doctor_name from appointments a\n" +
-//            "join doctors d\n" +
-//            "on a.doctor_id = d.doctor_id\n" +
-//            "where a.appointment_id = :appointmentId;", nativeQuery = true)
-//    List<AppointmentResponseDTO> findByAppointmentByAppointmentId(Long appointmentId);
+    @Query(value = "select a.appointment_id,d_doctor_name from appointments a\n" +
+            "join doctors d\n" +
+            "on a.doctor_id = d.doctor_id\n" +
+            "where a.appointment_id = :appointmentId;", nativeQuery = true)
+    List<AppointmentResponseDTO> findByAppointmentByAppointmentId(Long appointmentId);
 
 }
