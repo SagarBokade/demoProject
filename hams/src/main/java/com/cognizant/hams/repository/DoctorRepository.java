@@ -1,6 +1,6 @@
 package com.cognizant.hams.repository;
 
-import com.cognizant.hams.dto.AppointmentResponseDTO;
+import com.cognizant.hams.dto.Response.AppointmentResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.entity.Doctor;
 import jakarta.validation.constraints.NotBlank;
