@@ -1,7 +1,7 @@
 package com.cognizant.hams.service.Impl;
 
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
-import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
+import com.cognizant.hams.dto.Response.DoctorDetailsResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
@@ -17,6 +17,7 @@ import com.cognizant.hams.service.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -153,72 +154,6 @@ public class DoctorServiceImpl implements DoctorService {
 
     //Doctor Availability CURD Operations:
 
-    // Add Availability
-
-    @Override
-    @Transactional
-    public DoctorAvailabilityResponseDTO addAvailability(Long doctorId, DoctorAvailabilityDTO slotDto) {
-        Doctor doctor = doctorRepository.findByDoctorId(doctorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor", "doctorId", doctorId));
-
-        DoctorAvailability doctorAvailability = modelMapper.map(slotDto, DoctorAvailability.class);
-        doctorAvailability.setDoctor(doctor);
-
-        DoctorAvailability savedAvailability = doctorAvailabilityRepository.save(doctorAvailability);
-        return modelMapper.map(savedAvailability, DoctorAvailabilityResponseDTO.class);
-    }
-
-    // Get Availability
-
-    @Override
-    public List<DoctorAvailabilityResponseDTO> getAvailability(Long doctorId) {
-        List<DoctorAvailability> availabilities = doctorAvailabilityRepository.findByDoctorDoctorId(doctorId);
-        return availabilities.stream()
-                .map(availability -> modelMapper.map(availability, DoctorAvailabilityResponseDTO.class))
-                .collect(Collectors.toList());
-    }
-
-    // Delete Availability Slot
-
-    @Override
-    @Transactional
-    public DoctorAvailabilityResponseDTO updateAvailabilitySlot(Long doctorId, Long availabilityId, DoctorAvailabilityDTO doctorAvailabilityDTO) {
-        DoctorAvailability existingAvailability = doctorAvailabilityRepository.findById(availabilityId)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor", "availabilityId", availabilityId));
-
-        if(doctorAvailabilityDTO.getAvailableDate() != null){
-            existingAvailability.setAvailableDate(doctorAvailabilityDTO.getAvailableDate());
-        }
-        if(doctorAvailabilityDTO.getStartTime() != null){
-            existingAvailability.setStartTime(doctorAvailabilityDTO.getStartTime());
-        }
-        if(doctorAvailabilityDTO.getEndTime() != null){
-            existingAvailability.setEndTime(doctorAvailabilityDTO.getEndTime());
-        }
-        if(doctorAvailabilityDTO.isAvailable()){
-            existingAvailability.setAvailable(true);
-        }
-        System.out.println(existingAvailability);
-        doctorAvailabilityRepository.save(existingAvailability);
-        return modelMapper.map(existingAvailability, DoctorAvailabilityResponseDTO.class);
-    }
-
-//    @Override
-//    @Transactional
-//    public DoctorAvailabilityResponseDTO searchAvailabilityByDoctor(String doctorName){
-//
-//    }
-
-    @Override
-    public List<DoctorAndAvailabilityResponseDTO> getAvailableDoctor(String doctorName){
-        return doctorRepository.findByAvailableDoctorNameAndAvailability(doctorName);
-    }
-
-
-    @Override
-    public List<DoctorAndAvailabilityResponseDTO> searchDoctorByName(String doctorName){
-        return doctorRepository.findByDoctorNameAndAvailability(doctorName);
-    }
 
 
 

@@ -82,15 +82,10 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor", "Id", appointmentDTO.getDoctorId()));
 
         // **LOGIC UPDATE HERE**
-        Appointment appointment = new Appointment();
+        Appointment appointment = modelMapper.map(appointmentDTO, Appointment.class);
+        appointment.setStatus(AppointmentStatus.PENDING);
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
-        appointment.setAppointmentDate(appointmentDTO.getAppointmentDate());
-        appointment.setStartTime(appointmentDTO.getStartTime()); // Updated
-        appointment.setEndTime(appointmentDTO.getEndTime());     // Updated
-        appointment.setReason(appointmentDTO.getReason());
-//        appointment.setStatus(AppointmentStatus.SCHEDULED);
-        appointment.setStatus(AppointmentStatus.PENDING);
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
