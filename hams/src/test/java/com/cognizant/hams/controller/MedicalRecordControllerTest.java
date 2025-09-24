@@ -45,17 +45,14 @@ public class MedicalRecordControllerTest {
     private JwtTokenUtil jwtTokenUtil;
 
     @Test
-    @WithMockUser // Simulate a logged-in user
+    @WithMockUser
     public void testCreateRecord() throws Exception {
-        // Arrange
         MedicalRecordDTO requestDto = new MedicalRecordDTO(1001L, 1L, 101L, "Checkup", "Healthy", "Notes");
         MedicalRecordResponseDTO responseDto = new MedicalRecordResponseDTO();
         responseDto.setRecordId(1L);
         responseDto.setPatientName("Test Patient");
 
         Mockito.when(medicalRecordService.createRecord(any(MedicalRecordDTO.class))).thenReturn(responseDto);
-
-        // Act & Assert
         mockMvc.perform(post("/api/medical-records")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto))
@@ -68,13 +65,11 @@ public class MedicalRecordControllerTest {
     @Test
     @WithMockUser
     public void testGetRecordsForPatient() throws Exception {
-        // Arrange
         MedicalRecordResponseDTO responseDto = new MedicalRecordResponseDTO();
         responseDto.setRecordId(1L);
         Mockito.when(medicalRecordService.getRecordsForPatient(1L))
                 .thenReturn(Collections.singletonList(responseDto));
 
-        // Act & Assert
         mockMvc.perform(get("/api/medical-records/patient/{patientId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
@@ -83,13 +78,11 @@ public class MedicalRecordControllerTest {
     @Test
     @WithMockUser
     public void testGetRecordsForDoctor() throws Exception {
-        // Arrange
         MedicalRecordResponseDTO responseDto = new MedicalRecordResponseDTO();
         responseDto.setRecordId(1L);
         Mockito.when(medicalRecordService.getRecordsForDoctor(101L))
                 .thenReturn(Collections.singletonList(responseDto));
 
-        // Act & Assert
         mockMvc.perform(get("/api/medical-records/doctor/{doctorId}", 101L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));

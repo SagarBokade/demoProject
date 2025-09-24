@@ -60,13 +60,11 @@ public class NotificationServiceTest {
 
     @Test
     void testNotifyDoctorOnAppointmentRequest() {
-        // Arrange
+
         ArgumentCaptor<Notification> notificationCaptor = ArgumentCaptor.forClass(Notification.class);
 
-        // Act
         notificationService.notifyDoctorOnAppointmentRequest(mockAppointment);
 
-        // Assert
         verify(notificationRepository, times(1)).save(notificationCaptor.capture());
         Notification capturedNotification = notificationCaptor.getValue();
         assertThat(capturedNotification.getRecipientType()).isEqualTo(Notification.RecipientType.DOCTOR);
@@ -76,13 +74,11 @@ public class NotificationServiceTest {
 
     @Test
     void testNotifyPatientOnAppointmentDecision_Confirmed() {
-        // Arrange
+
         ArgumentCaptor<Notification> notificationCaptor = ArgumentCaptor.forClass(Notification.class);
 
-        // Act
         notificationService.notifyPatientOnAppointmentDecision(mockAppointment, true, null);
 
-        // Assert
         verify(notificationRepository, times(1)).save(notificationCaptor.capture());
         Notification captured = notificationCaptor.getValue();
         assertThat(captured.getRecipientType()).isEqualTo(Notification.RecipientType.PATIENT);
@@ -92,27 +88,24 @@ public class NotificationServiceTest {
 
     @Test
     void testGetNotificationForPatient() {
-        // Arrange
+
         given(notificationRepository.findByRecipientTypeAndRecipientIdOrderByCreatedAtDesc(Notification.RecipientType.PATIENT, 1L))
                 .willReturn(Collections.singletonList(mockNotification));
         given(modelMapper.map(mockNotification, NotificationResponseDTO.class)).willReturn(new NotificationResponseDTO());
 
-        // Act
         List<NotificationResponseDTO> result = notificationService.getNotificationForPatient(1L);
 
-        // Assert
         assertThat(result).hasSize(1);
     }
 
     @Test
     void testMarkAsRead() {
-        // Arrange
+
         given(notificationRepository.findById(1L)).willReturn(Optional.of(mockNotification));
 
-        // Act
+
         notificationService.markAsRead(1L);
 
-        // Assert
         verify(notificationRepository, times(1)).save(mockNotification);
         assertThat(mockNotification.isRead()).isTrue();
     }

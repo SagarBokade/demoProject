@@ -29,11 +29,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class PatientServiceTest {
 
-    // @InjectMocks creates an instance of the service and injects the mocked dependencies into it.
     @InjectMocks
     private PatientServiceImpl patientService;
 
-    // @Mock creates mock versions of the dependencies.
     @Mock
     private PatientRepository patientRepository;
     @Mock
@@ -55,16 +53,14 @@ public class PatientServiceTest {
 
     @Test
     void testCreatePatient_Success() {
-        // Arrange
+
         when(patientRepository.existsByEmailAndContactNumber(anyString(), anyString())).thenReturn(false);
         when(modelMapper.map(patientDTO, Patient.class)).thenReturn(patient);
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
         when(modelMapper.map(patient, PatientResponseDTO.class)).thenReturn(patientResponseDTO);
 
-        // Act
         PatientResponseDTO result = patientService.createPatient(patientDTO);
 
-        // Assert
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo("John Doe");
         verify(patientRepository, times(1)).save(any(Patient.class));
@@ -72,81 +68,68 @@ public class PatientServiceTest {
 
     @Test
     void testCreatePatient_ThrowsAPIException() {
-        // Arrange
+
         when(patientRepository.existsByEmailAndContactNumber(anyString(), anyString())).thenReturn(true);
         when(modelMapper.map(patientDTO, Patient.class)).thenReturn(patient);
 
-        // Act & Assert
         assertThrows(APIException.class, () -> patientService.createPatient(patientDTO));
         verify(patientRepository, never()).save(any(Patient.class));
     }
 
     @Test
     void testGetPatientById_ValidId() {
-        // Arrange
+
         when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
         when(modelMapper.map(patient, PatientResponseDTO.class)).thenReturn(patientResponseDTO);
 
-        // Act
         PatientResponseDTO result = patientService.getPatientById(1L);
 
-        // Assert
         assertThat(result).isNotNull();
         assertThat(result.getPatientId()).isEqualTo(1L);
     }
 
     @Test
     void testGetPatientById_InvalidId() {
-        // Arrange
+
         when(patientRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> patientService.getPatientById(99L));
     }
 
     @Test
     void testUpdatePatient() {
-        // Arrange
+
         PatientDTO updateDetails = new PatientDTO();
         updateDetails.setName("Johnathan Doe");
 
         when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
-        // This test assumes a corrected service that calls .save()
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
         when(modelMapper.map(patient, PatientResponseDTO.class)).thenReturn(patientResponseDTO);
 
-        // Act
         patientService.updatePatient(1L, updateDetails);
 
-        // Assert
+
         verify(patientRepository, times(1)).findById(1L);
-        // This verify step will FAIL with your current code but PASS once the bug is fixed.
         verify(patientRepository, times(1)).save(any(Patient.class));
     }
 
     @Test
     void testDeletePatient() {
-        // Arrange
         when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
         doNothing().when(patientRepository).delete(patient);
 
-        // Act
         patientService.deletePatient(1L);
 
-        // Assert/Verify
         verify(patientRepository, times(1)).delete(patient);
     }
 
     @Test
     void testGetAllDoctors() {
-        // Arrange
         List<DoctorResponseDTO> doctors = Collections.singletonList(new DoctorResponseDTO());
         when(doctorService.getAllDoctor()).thenReturn(doctors);
 
-        // Act
         List<DoctorResponseDTO> result = patientService.getAllDoctors();
 
-        // Assert
         assertThat(result).hasSize(1);
         verify(doctorService, times(1)).getAllDoctor();
     }

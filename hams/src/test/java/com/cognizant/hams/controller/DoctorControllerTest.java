@@ -49,15 +49,13 @@ public class DoctorControllerTest {
     private JwtTokenUtil jwtTokenUtil;
 
     @Test
-    @WithMockUser // Simulate a logged-in user
+    @WithMockUser
     public void testCreateDoctor() throws Exception {
-        // Arrange
         DoctorDTO doctorToCreate = new DoctorDTO("Dr. Strange", "MD", "Neurosurgery", "Sanctum", 10, "5551234567", "strange@sanctum.com");
         DoctorResponseDTO savedDoctor = new DoctorResponseDTO(1L, "Dr. Strange", "Neurosurgery", "MD", "Sanctum", 10, "strange@sanctum.com", "5551234567");
 
         Mockito.when(doctorService.createDoctor(any(DoctorDTO.class))).thenReturn(savedDoctor);
 
-        // Act & Assert
         mockMvc.perform(post("/api/doctors")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(doctorToCreate))
@@ -70,11 +68,9 @@ public class DoctorControllerTest {
     @Test
     @WithMockUser
     public void testGetDoctorById() throws Exception {
-        // Arrange
         DoctorResponseDTO doctor = new DoctorResponseDTO(1L, "Dr. Strange", "Neurosurgery", null, null, null, null, null);
         Mockito.when(doctorService.getDoctorById(1L)).thenReturn(doctor);
 
-        // Act & Assert
         mockMvc.perform(get("/api/doctors/{doctorId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.doctorName", is("Dr. Strange")));
@@ -83,13 +79,11 @@ public class DoctorControllerTest {
     @Test
     @WithMockUser
     public void testGetAllDoctor() throws Exception {
-        // Arrange
         List<DoctorResponseDTO> doctors = Collections.singletonList(
                 new DoctorResponseDTO(1L, "Dr. Strange", "Neurosurgery", null, null, null, null, null)
         );
         Mockito.when(doctorService.getAllDoctor()).thenReturn(doctors);
 
-        // Act & Assert
         mockMvc.perform(get("/api/doctors/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -99,14 +93,11 @@ public class DoctorControllerTest {
     @Test
     @WithMockUser
     public void testUpdateDoctor() throws Exception {
-        // Arrange
         long doctorId = 1L;
         DoctorDTO doctorToUpdate = new DoctorDTO("Dr. Strange", "Sorcerer Supreme", "Neurosurgery", null, null, null, null);
         DoctorResponseDTO updatedDoctor = new DoctorResponseDTO(doctorId, "Dr. Strange", "Neurosurgery", "Sorcerer Supreme", null, null, null, null);
 
         Mockito.when(doctorService.updateDoctor(eq(doctorId), any(DoctorDTO.class))).thenReturn(updatedDoctor);
-
-        // Act & Assert
         mockMvc.perform(put("/api/doctors/{doctorId}", doctorId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(doctorToUpdate))

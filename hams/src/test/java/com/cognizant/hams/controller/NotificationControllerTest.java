@@ -30,20 +30,17 @@ public class NotificationControllerTest {
     @MockBean
     private NotificationService notificationService;
 
-    // Mock security beans to allow the test context to load
     @MockBean
     private CustomUserDetailsService customUserDetailsService;
     @MockBean
     private JwtTokenUtil jwtTokenUtil;
 
     @Test
-    @WithMockUser // Simulate a logged-in user
+    @WithMockUser
     public void testGetPatientNotifications() throws Exception {
-        // Arrange
         Mockito.when(notificationService.getNotificationForPatient(1L))
                 .thenReturn(Collections.singletonList(new NotificationResponseDTO()));
 
-        // Act & Assert
         mockMvc.perform(get("/api/notifications/patients/{patientId}/notification", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
@@ -52,11 +49,9 @@ public class NotificationControllerTest {
     @Test
     @WithMockUser
     public void testGetNotificationsForDoctor() throws Exception {
-        // Arrange
         Mockito.when(notificationService.getNotificationForDoctor(101L))
                 .thenReturn(Collections.singletonList(new NotificationResponseDTO()));
 
-        // Act & Assert
         mockMvc.perform(get("/api/notifications/doctors/{doctorId}/notification", 101L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
@@ -65,10 +60,8 @@ public class NotificationControllerTest {
     @Test
     @WithMockUser
     public void testMarkAsRead() throws Exception {
-        // Arrange
         Mockito.doNothing().when(notificationService).markAsRead(1L);
 
-        // Act & Assert
         mockMvc.perform(put("/api/notifications/{notificationId}/read", 1L)
                         .with(csrf())) // Add CSRF token for PUT request
                 .andExpect(status().isOk());

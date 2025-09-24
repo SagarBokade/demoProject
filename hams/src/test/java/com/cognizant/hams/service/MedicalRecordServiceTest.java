@@ -43,7 +43,7 @@ public class MedicalRecordServiceTest {
     @Mock
     private DoctorRepository doctorRepository;
     @Mock
-    private ModelMapper modelMapper; // Though your service doesn't use it, it's a dependency
+    private ModelMapper modelMapper;
 
     @InjectMocks
     private MedicalRecordServiceImpl medicalRecordService;
@@ -79,16 +79,15 @@ public class MedicalRecordServiceTest {
 
     @Test
     void testCreateRecord_Success() {
-        // Arrange
+
         given(appointmentRepository.findById(1001L)).willReturn(Optional.of(appointment));
         given(patientRepository.findById(1L)).willReturn(Optional.of(patient));
         given(doctorRepository.findById(101L)).willReturn(Optional.of(doctor));
         given(medicalRecordRepository.save(any(MedicalRecord.class))).willReturn(medicalRecord);
 
-        // Act
         MedicalRecordResponseDTO result = medicalRecordService.createRecord(medicalRecordDTO);
 
-        // Assert
+
         assertThat(result).isNotNull();
         assertThat(result.getPatientId()).isEqualTo(1L);
         assertThat(result.getDoctorName()).isEqualTo("Test Doctor");
@@ -97,31 +96,30 @@ public class MedicalRecordServiceTest {
 
     @Test
     void testCreateRecord_ThrowsAPIException_WhenPatientMismatch() {
-        // Arrange
-        // Create a different patient to simulate a mismatch
+
         Patient wrongPatient = new Patient();
         wrongPatient.setPatientId(2L);
-        appointment.setPatient(wrongPatient); // Appointment belongs to a different patient
+        appointment.setPatient(wrongPatient);
 
         given(appointmentRepository.findById(1001L)).willReturn(Optional.of(appointment));
         given(patientRepository.findById(1L)).willReturn(Optional.of(patient));
         given(doctorRepository.findById(101L)).willReturn(Optional.of(doctor));
 
-        // Act & Assert
+
         assertThrows(APIException.class, () -> medicalRecordService.createRecord(medicalRecordDTO));
     }
 
     @Test
     void testGetRecordsForPatient() {
-        // Arrange
+
         given(patientRepository.existsById(1L)).willReturn(true);
         given(medicalRecordRepository.findByPatient_PatientIdOrderByCreatedAtDesc(1L))
                 .willReturn(Collections.singletonList(medicalRecord));
 
-        // Act
+
         List<MedicalRecordResponseDTO> result = medicalRecordService.getRecordsForPatient(1L);
 
-        // Assert
+
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getPatientName()).isEqualTo("Test Patient");
     }

@@ -61,16 +61,16 @@ public class DoctorServiceTest {
     @Test
     @DisplayName("Test Create Doctor - Success")
     void givenDoctorDTO_whenCreateDoctor_thenReturnSavedDoctor() {
-        // Arrange
+
         given(doctorRepository.existsByDoctorNameAndSpecialization(anyString(), anyString())).willReturn(false);
         given(modelMapper.map(doctorDTO, Doctor.class)).willReturn(doctor);
         given(doctorRepository.save(any(Doctor.class))).willReturn(doctor);
         given(modelMapper.map(doctor, DoctorResponseDTO.class)).willReturn(doctorResponseDTO);
 
-        // Act
+
         DoctorResponseDTO result = doctorService.createDoctor(doctorDTO);
 
-        // Assert
+
         assertThat(result).isNotNull();
         assertThat(result.getDoctorName()).isEqualTo("Dr. Strange");
         verify(doctorRepository, times(1)).save(any(Doctor.class));
@@ -79,11 +79,11 @@ public class DoctorServiceTest {
     @Test
     @DisplayName("Test Create Doctor - Throws APIException when Doctor Exists")
     void givenExistingDoctor_whenCreateDoctor_thenThrowsAPIException() {
-        // Arrange
+
         given(doctorRepository.existsByDoctorNameAndSpecialization(anyString(), anyString())).willReturn(true);
         given(modelMapper.map(doctorDTO, Doctor.class)).willReturn(doctor);
 
-        // Act & Assert
+
         assertThrows(APIException.class, () -> doctorService.createDoctor(doctorDTO));
         verify(doctorRepository, never()).save(any(Doctor.class));
     }
@@ -91,15 +91,14 @@ public class DoctorServiceTest {
     @Test
     @DisplayName("Test Get Doctor By Id - Success")
     void givenDoctorId_whenGetDoctorById_thenReturnDoctor() {
-        // Arrange
-        // Note: Your service uses findByDoctorId, not findById
+
         given(doctorRepository.findByDoctorId(1L)).willReturn(Optional.of(doctor));
         given(modelMapper.map(Optional.of(doctor), DoctorResponseDTO.class)).willReturn(doctorResponseDTO);
 
-        // Act
+
         DoctorResponseDTO result = doctorService.getDoctorById(1L);
 
-        // Assert
+
         assertThat(result).isNotNull();
         assertThat(result.getDoctorId()).isEqualTo(1L);
     }
@@ -107,10 +106,10 @@ public class DoctorServiceTest {
     @Test
     @DisplayName("Test Get Doctor By Id - Throws APIException")
     void givenInvalidId_whenGetDoctorById_thenThrowsAPIException() {
-        // Arrange
+
         given(doctorRepository.findByDoctorId(99L)).willReturn(Optional.empty());
 
-        // Act & Assert
+
         assertThrows(APIException.class, () -> doctorService.getDoctorById(99L));
     }
 
@@ -125,10 +124,10 @@ public class DoctorServiceTest {
         given(doctorRepository.save(any(Doctor.class))).willReturn(doctor);
         given(modelMapper.map(doctor, DoctorResponseDTO.class)).willReturn(doctorResponseDTO);
 
-        // Act
+
         doctorService.updateDoctor(1L, updateDetails);
 
-        // Assert
+
         verify(doctorRepository, times(1)).findById(1L);
         verify(doctorRepository, times(1)).save(any(Doctor.class));
     }
