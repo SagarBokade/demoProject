@@ -29,11 +29,13 @@ public class AdminController {
     @PostMapping("/create-user")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDTO> createPrivilegedUser(@RequestBody AdminUserRequestDTO request) {
-        User newUser = new User();
-        newUser.setUsername(request.getUsername());
-        newUser.setPassword(request.getPassword());
+        /*User newUser = new User();
 
-        User createdUser = authService.createPrivilegedUser(newUser, request.getRoleName());
+        newUser.setUsername(request.getUsername());
+        newUser.setPassword(request.getPassword());*/
+
+       // User createdUser = authService.createPrivilegedUser(newUser, request.getRoleName());
+        User createdUser = authService.createPrivilegedUser(request);
 
         // Create and return the response DTO
         UserResponseDTO responseDTO = new UserResponseDTO();

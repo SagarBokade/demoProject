@@ -24,10 +24,12 @@ public class Doctor {
 
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be exactly 10 digits")
+    @Column(unique = true)
     private String contactNumber;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid Email")
+    @Column(unique = true)
     private String email;
 
     @NotBlank(message = "Specialization of a doctor is required")

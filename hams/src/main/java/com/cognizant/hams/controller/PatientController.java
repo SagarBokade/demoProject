@@ -3,13 +3,21 @@ package com.cognizant.hams.controller;
 import com.cognizant.hams.dto.Request.PatientDTO;
 import com.cognizant.hams.dto.Response.PatientResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
+import com.cognizant.hams.entity.Doctor;
+import com.cognizant.hams.entity.Patient;
+import com.cognizant.hams.exception.APIException;
+import com.cognizant.hams.exception.ResourceNotFoundException;
+import com.cognizant.hams.repository.PatientRepository;
 import com.cognizant.hams.service.NotificationService;
 import com.cognizant.hams.service.Impl.PatientServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +30,7 @@ public class PatientController {
 
     private final PatientServiceImpl patientService;
     private final NotificationService notificationService;
+    PatientRepository patientRepository;
 
     @PostMapping
     public ResponseEntity<PatientResponseDTO> createPatient(@Valid @RequestBody PatientDTO createDTO){
@@ -31,6 +40,7 @@ public class PatientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PatientResponseDTO> getPatientById(@PathVariable("id") Long patientId) {
+
         return ResponseEntity.ok(patientService.getPatientById(patientId));
     }
 
@@ -42,6 +52,7 @@ public class PatientController {
     }
 
     @DeleteMapping("/{patientId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PatientResponseDTO> deletePatient(@PathVariable("patientId") Long patientId){
         PatientResponseDTO deletePatientDTO = patientService.deletePatient(patientId);
         return new ResponseEntity<>(deletePatientDTO, HttpStatus.OK);

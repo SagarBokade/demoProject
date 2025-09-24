@@ -28,12 +28,10 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody AuthRequest registrationRequest) {
-        User newUser = new User();
-        newUser.setUsername(registrationRequest.getUsername());
-        newUser.setPassword(registrationRequest.getPassword());
+
+        User createdPatient=authService.registerNewUser(registrationRequest);
 
         // This method now handles default role assignment internally.
-        User registeredUser = authService.registerNewUser(newUser);
-        return ResponseEntity.ok("User registered successfully with ID: " + registeredUser.getUserId());
+        return ResponseEntity.ok("User registered successfully with ID: " + createdPatient.getUserId());
     }
 }

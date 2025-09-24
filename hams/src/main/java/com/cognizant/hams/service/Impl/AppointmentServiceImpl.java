@@ -82,6 +82,12 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor", "Id", appointmentDTO.getDoctorId()));
 
         Appointment appointment = modelMapper.map(appointmentDTO, Appointment.class);
+
+        // Ensure the ID and version are null for a new entity.
+        // This prevents ModelMapper from carrying over a value from the DTO.
+        appointment.setAppointmentId(null);
+        appointment.setVersion(null);
+
         appointment.setStatus(AppointmentStatus.PENDING);
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);

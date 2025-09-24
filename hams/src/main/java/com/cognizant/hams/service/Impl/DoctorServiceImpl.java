@@ -1,5 +1,6 @@
 package com.cognizant.hams.service.Impl;
 
+import com.cognizant.hams.dto.Request.AdminUserRequestDTO;
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorDetailsResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
@@ -7,11 +8,13 @@ import com.cognizant.hams.dto.Request.DoctorDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
 import com.cognizant.hams.entity.Doctor;
 import com.cognizant.hams.entity.DoctorAvailability;
+import com.cognizant.hams.entity.User;
 import com.cognizant.hams.exception.APIException;
 import com.cognizant.hams.exception.ResourceNotFoundException;
 import com.cognizant.hams.repository.AppointmentRepository;
 import com.cognizant.hams.repository.DoctorAvailabilityRepository;
 import com.cognizant.hams.repository.DoctorRepository;
+import com.cognizant.hams.repository.UserRepository;
 import com.cognizant.hams.service.DoctorService;
 import com.cognizant.hams.service.NotificationService;
 import jakarta.transaction.Transactional;
@@ -29,6 +32,8 @@ import java.util.stream.Collectors;
 public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
+
+    private final UserRepository userRepository;
 
     private final DoctorAvailabilityRepository doctorAvailabilityRepository;
 
@@ -48,14 +53,20 @@ public class DoctorServiceImpl implements DoctorService {
     // Create Doctor
 
     @Override
-    public DoctorResponseDTO createDoctor(DoctorDTO doctorDTO) {
+    public DoctorResponseDTO createDoctor(AdminUserRequestDTO doctorDTO) {
         // Option A: If you're creating a new doctor, make sure the ID is null
         // and Hibernate will insert it.
         // If an ID is present, treat it as an update.
         Doctor doctor = modelMapper.map(doctorDTO,Doctor.class);
+        if (doctorRepository.existsByEmailOrContactNumber(doctor.getEmail(), doctor.getContactNumber())) {
+            throw new APIException("A doctor with the provided email or contact number already exists.");
+        }
         if(doctorRepository.existsByDoctorNameAndSpecialization(doctor.getDoctorName(),doctor.getSpecialization())){
             throw new APIException("Doctor with name " + doctorDTO.getDoctorName() + " and specialization " + doctorDTO.getSpecialization() + " already exist.");
         }
+        User user=userRepository.findById("edd31d31-b822-4203-95d8-14557e02a818").get();
+
+        doctor.setUser(user);
         Doctor saveDoctor = doctorRepository.save(doctor);
         return modelMapper.map(saveDoctor,DoctorResponseDTO.class);
     }
