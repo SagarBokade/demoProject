@@ -56,6 +56,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN") // Only admins can access these endpoints
+                        .requestMatchers("/api/doctors/**").hasRole("DOCTOR") // Only admins can access these endpoints
+                        .requestMatchers("/api/patients/**").hasRole("PATIENT")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
