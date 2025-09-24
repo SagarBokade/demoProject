@@ -38,6 +38,9 @@ public class Appointment {
 
     private String reason;
 
+    @Version
+    private Integer version;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AppointmentStatus status;

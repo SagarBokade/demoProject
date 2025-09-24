@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class DoctorController {
     }
 
     @GetMapping("/{doctorId}")
+    @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<DoctorResponseDTO> getDoctorById(@PathVariable("doctorId") Long doctorId){
         DoctorResponseDTO doctor = doctorService.getDoctorById(doctorId);
         return new ResponseEntity<>(doctor,HttpStatus.OK);
@@ -50,6 +52,7 @@ public class DoctorController {
     }
 
     @DeleteMapping("/{doctorId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DoctorResponseDTO> deleteDoctor(@PathVariable("doctorId") Long doctorId){
         DoctorResponseDTO deleteDoctor = doctorService.deleteDoctor(doctorId);
         return new ResponseEntity<>(deleteDoctor, HttpStatus.OK);

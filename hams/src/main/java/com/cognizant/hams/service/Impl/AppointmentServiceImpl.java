@@ -81,8 +81,13 @@ public class AppointmentServiceImpl implements AppointmentService {
         Doctor doctor = doctorRepository.findById(appointmentDTO.getDoctorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor", "Id", appointmentDTO.getDoctorId()));
 
-        // **LOGIC UPDATE HERE**
         Appointment appointment = modelMapper.map(appointmentDTO, Appointment.class);
+
+        // Ensure the ID and version are null for a new entity.
+        // This prevents ModelMapper from carrying over a value from the DTO.
+        appointment.setAppointmentId(null);
+        appointment.setVersion(null);
+
         appointment.setStatus(AppointmentStatus.PENDING);
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
@@ -93,7 +98,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         return modelMapper.map(savedAppointment, AppointmentResponseDTO.class);
     }
-
     @Override
     public AppointmentResponseDTO updateAppointment(Long appointmentId, AppointmentDTO appointmentUpdateDTO) {
         Appointment existingAppointment = appointmentRepository.findById(appointmentId)

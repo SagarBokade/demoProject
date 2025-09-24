@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class MedicalRecordController {
     private final MedicalRecordService medicalRecordService;
     @PostMapping
+    @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<MedicalRecordResponseDTO> createRecord(@Valid @RequestBody MedicalRecordDTO dto) {
         MedicalRecordResponseDTO saved = medicalRecordService.createRecord(dto);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
