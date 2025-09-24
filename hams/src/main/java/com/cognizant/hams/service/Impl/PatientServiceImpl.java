@@ -14,6 +14,9 @@ import com.cognizant.hams.service.NotificationService;
 import com.cognizant.hams.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,11 +47,27 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public PatientResponseDTO getPatientById(Long patientId){
+        // Get the authenticated user's details from the security context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        // Check if the authenticated user has the ADMIN role
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        Patient loggedInPatient = (Patient) patientRepository.findByUser_Username(currentUsername)
+                .orElseThrow(() -> new APIException("Logged-in user is not a patient."));
+
+        if (!isAdmin && !loggedInPatient.getPatientId().equals(patientId)) {
+            throw new AccessDeniedException("You are not authorized to view another patient's details.");
+        }
+
+        // If the checks pass, retrieve the patient's details from the repository.
         Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(()->new ResourceNotFoundException("Patient", "patientId", patientId));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", "patientId", patientId));
+
         return modelMapper.map(patient, PatientResponseDTO.class);
     }
-
     @Override
     public PatientResponseDTO updatePatient(Long patientId, PatientDTO patientUpdateDTO) {
         Patient existingPatient = patientRepository.findById(patientId)
