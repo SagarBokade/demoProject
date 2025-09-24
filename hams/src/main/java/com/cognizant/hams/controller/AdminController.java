@@ -1,8 +1,6 @@
 package com.cognizant.hams.controller;
 
 import com.cognizant.hams.dto.Request.AdminUserRequestDTO;
-import com.cognizant.hams.dto.Request.AuthRequest;
-import com.cognizant.hams.dto.Response.AuthResponse;
 import com.cognizant.hams.dto.Response.UserResponseDTO;
 import com.cognizant.hams.entity.User;
 import com.cognizant.hams.service.AuthService;
