@@ -109,6 +109,9 @@ public class DoctorServiceImpl implements DoctorService {
         if(doctorDTO.getEmail() != null){
             existingDoctor.setEmail(doctorDTO.getEmail());
         }
+        if(doctorDTO.getContactNumber() != null){
+            existingDoctor.setContactNumber(doctorDTO.getContactNumber());
+        }
 
         doctorRepository.save(existingDoctor);
         return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
