@@ -81,7 +81,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         Doctor doctor = doctorRepository.findById(appointmentDTO.getDoctorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor", "Id", appointmentDTO.getDoctorId()));
 
-        // **LOGIC UPDATE HERE**
         Appointment appointment = modelMapper.map(appointmentDTO, Appointment.class);
         appointment.setStatus(AppointmentStatus.PENDING);
         appointment.setPatient(patient);
@@ -105,7 +104,6 @@ public class AppointmentServiceImpl implements AppointmentService {
             existingAppointment.setDoctor(newDoctor);
         }
 
-        // **LOGIC UPDATE HERE**
         if (appointmentUpdateDTO.getAppointmentDate() != null) {
             existingAppointment.setAppointmentDate(appointmentUpdateDTO.getAppointmentDate());
         }
@@ -124,11 +122,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         return modelMapper.map(updatedAppointment, AppointmentResponseDTO.class);
     }
 
-    // ... (The rest of your service methods: cancelAppointment, getAppointmentById, etc. remain unchanged)
 
     @Override
     public AppointmentResponseDTO cancelAppointment(Long appointmentId) {
-        // ... (no changes needed here)
         Appointment appointmentToCancel = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment", "Id", appointmentId));
 
