@@ -51,4 +51,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             "where a.appointment_id = :appointmentId;", nativeQuery = true)
     List<AppointmentResponseDTO> findByAppointmentByAppointmentId(Long appointmentId);
 
+    boolean existsByEmailOrContactNumber(String email, String contactNumber);
+
 }

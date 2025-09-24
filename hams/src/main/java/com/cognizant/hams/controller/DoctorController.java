@@ -1,5 +1,6 @@
 package com.cognizant.hams.controller;
 
+import com.cognizant.hams.dto.Request.AdminUserRequestDTO;
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorDetailsResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +26,7 @@ public class DoctorController {
     private final NotificationService notificationService;
 
     @PostMapping
-    public ResponseEntity<DoctorResponseDTO> createDoctor(@Valid @RequestBody DoctorDTO doctorDTO){
+    public ResponseEntity<DoctorResponseDTO> createDoctor(@Valid @RequestBody AdminUserRequestDTO doctorDTO){
         DoctorResponseDTO savedDoctor = doctorService.createDoctor(doctorDTO);
         return new ResponseEntity<>(savedDoctor, HttpStatus.CREATED);
     }
@@ -43,6 +45,7 @@ public class DoctorController {
     }
 
     @PutMapping("/{doctorId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DoctorResponseDTO> updateDoctor(@PathVariable("doctorId") Long doctorId, @RequestBody DoctorDTO doctorDTO){
         DoctorResponseDTO updateDoctor = doctorService.updateDoctor(doctorId,doctorDTO);
         return new ResponseEntity<>(updateDoctor,HttpStatus.OK);
@@ -50,6 +53,7 @@ public class DoctorController {
     }
 
     @DeleteMapping("/{doctorId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DoctorResponseDTO> deleteDoctor(@PathVariable("doctorId") Long doctorId){
         DoctorResponseDTO deleteDoctor = doctorService.deleteDoctor(doctorId);
         return new ResponseEntity<>(deleteDoctor, HttpStatus.OK);
