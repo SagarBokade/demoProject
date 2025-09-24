@@ -4,7 +4,9 @@ import com.cognizant.hams.dto.Response.AppointmentResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorDetailsResponseDTO;
 import com.cognizant.hams.entity.Doctor;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -51,4 +53,13 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             "where a.appointment_id = :appointmentId;", nativeQuery = true)
     List<AppointmentResponseDTO> findByAppointmentByAppointmentId(Long appointmentId);
 
+    boolean existsByDoctorNameAndContactNumber(@NotBlank(message = "Doctor name is required")
+                                               @Size(min = 3, max = 25, message = "Name must be between 3 and 25 characters") String doctorName,
+                                               @NotBlank(message = "Phone number is required") @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be exactly 10 digits") String contactNumber);
+
+    boolean existsByContactNumberAndEmail(@NotBlank(message = "Phone number is required") @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be exactly 10 digits") String contactNumber, @NotBlank(message = "Email is required") @Email(message = "Invalid Email") String email);
+
+    boolean existsByContactNumber(@NotBlank(message = "Phone number is required") @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be exactly 10 digits") String contactNumber);
+
+    boolean existsByEmail(@NotBlank(message = "Email is required") @Email(message = "Invalid Email") String email);
 }

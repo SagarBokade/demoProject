@@ -1,5 +1,6 @@
 package com.cognizant.hams.dto.Request;
 
+import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,9 +19,6 @@ public class DoctorDTO {
     @NotBlank(message = "Specialization is required")
     private String specialization;
 
-//    @NotBlank(message = "Available days are required")
-//    private String availableDays;
-
     @NotBlank(message = "Clinic address is required")
     private String clinicAddress;
 
@@ -33,7 +31,4 @@ public class DoctorDTO {
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid Email")
     private String email;
-
-
-
 }

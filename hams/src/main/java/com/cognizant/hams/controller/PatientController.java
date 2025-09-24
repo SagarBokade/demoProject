@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/patients")
+@RequestMapping("/api/patient")
 public class PatientController {
 
 
@@ -46,26 +46,19 @@ public class PatientController {
         return new ResponseEntity<>(deletePatientDTO, HttpStatus.OK);
     }
 
-//    @GetMapping("/doctorNameAndSpecialization")
-//    public ResponseEntity<List<DoctorResponseDTO>> searchDoctorByNameAndSpecialization(@RequestParam("name") String name,
-//                                                           @RequestParam("specialization") String specialization){
-//        List<DoctorResponseDTO> doctors = patientService.searchDoctorsByNameAndSpecialization(name, specialization);
-//        return new ResponseEntity<>(doctors, HttpStatus.OK);
-//    }
-
-    @GetMapping("/doctorName")
+    @GetMapping("/doctor-name")
     public ResponseEntity<List<DoctorResponseDTO>> searchDoctorByName(@RequestParam("name") String name){
         List<DoctorResponseDTO> doctors = patientService.searchDoctorByName(name);
         return new ResponseEntity<>(doctors, HttpStatus.OK);
     }
 
-    @GetMapping("/doctorSpecialization")
+    @GetMapping("/doctor-specialization")
     public ResponseEntity<List<DoctorResponseDTO>> searchDoctorBySpecialization(@RequestParam("specialization") String specialization){
         List<DoctorResponseDTO> doctors = patientService.searchDoctorBySpecialization(specialization);
         return new ResponseEntity<>(doctors, HttpStatus.OK);
     }
 
-    @GetMapping("/allDoctors")
+    @GetMapping("/get-all-doctors")
     public ResponseEntity<List<DoctorResponseDTO>> getAllDoctors(){
         List<DoctorResponseDTO> doctors = patientService.getAllDoctors();
         return new ResponseEntity<>(doctors, HttpStatus.OK);

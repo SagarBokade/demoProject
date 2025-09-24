@@ -6,7 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "doctors")
+@Table(name = "doctor", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"contactNumber"}),
+        @UniqueConstraint(columnNames = {"email"})
+})
 @Data
 @NoArgsConstructor
 public class Doctor {
@@ -44,8 +47,6 @@ public class Doctor {
     @NotBlank(message = "Clinic address is required")
     @Size(max = 255, message = "Address cannot exceed 255 characters")
     private String clinicAddress;
-
-
 }
 
 

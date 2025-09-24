@@ -16,13 +16,14 @@ import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
-@Table(name = "patients")
+@Table(name = "patients", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"email"}),
+        @UniqueConstraint(columnNames = {"contactNumber"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Patient {
-    // Inside Patient.java
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long patientId;
@@ -31,7 +32,7 @@ public class Patient {
     @JoinColumn(name = "userId")
     private User user;
 
-    @NotBlank(message = "Name is required")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Past
@@ -49,9 +50,7 @@ public class Patient {
     @Column(unique = true)
     private String email;
 
-//    private String status;
-
     @NotBlank(message = "Address is required")
-    private String Address;
+    private String address;
     private String bloodGroup;
 }

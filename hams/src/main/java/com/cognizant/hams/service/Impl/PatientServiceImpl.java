@@ -25,19 +25,13 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
     private final ModelMapper modelMapper;
-    private final DoctorRepository doctorRepository;
-    private final AppointmentRepository appointmentRepository;
     private final DoctorService doctorService;
-    private final NotificationService notificationService;
 
 
     @Override
     public PatientResponseDTO createPatient(PatientDTO patientCreateDTO){
         Patient patient = modelMapper.map(patientCreateDTO, Patient.class);
-        if(patientRepository.existsByEmailAndContactNumber(patient.getEmail(), patient.getContactNumber())){
-            throw new APIException("Person with email " + patient.getEmail() + " and contact number " + patient.getContactNumber() + "already exists");
-        }
-        Patient savedPatient = patientRepository.save(patient);
+        patientRepository.save(patient);
         return modelMapper.map(patient, PatientResponseDTO.class);
     }
 
@@ -90,10 +84,6 @@ public class PatientServiceImpl implements PatientService {
         return doctorService.getAllDoctor();
     }
 
-//    @Override
-//    public List<DoctorResponseDTO> searchDoctorsByNameAndSpecialization(String name, String specialization) {
-//        return doctorService.searchDoctorsByNameAndSpecialization(name, specialization);
-//    }
 
     @Override
     public List<DoctorResponseDTO> searchDoctorByName(String name) {

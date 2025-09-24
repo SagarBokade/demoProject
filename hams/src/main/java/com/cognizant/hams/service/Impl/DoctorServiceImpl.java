@@ -1,23 +1,15 @@
 package com.cognizant.hams.service.Impl;
 
-import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
-import com.cognizant.hams.dto.Response.DoctorDetailsResponseDTO;
-import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Request.DoctorDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
 import com.cognizant.hams.entity.Doctor;
-import com.cognizant.hams.entity.DoctorAvailability;
 import com.cognizant.hams.exception.APIException;
 import com.cognizant.hams.exception.ResourceNotFoundException;
-import com.cognizant.hams.repository.AppointmentRepository;
-import com.cognizant.hams.repository.DoctorAvailabilityRepository;
 import com.cognizant.hams.repository.DoctorRepository;
 import com.cognizant.hams.service.DoctorService;
-import com.cognizant.hams.service.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,33 +21,14 @@ import java.util.stream.Collectors;
 public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
-
-    private final DoctorAvailabilityRepository doctorAvailabilityRepository;
-
     private final ModelMapper modelMapper;
 
-    private final AppointmentRepository appointmentRepository;
-
-    private final NotificationService notificationService;
-
-//    private SpecializationRepository specializationRepository;
-
-//    public DoctorServiceImpl(DoctorRepository doctorRepository, SpecializationRepository specializationRepository){
-//        this.doctorRepository = doctorRepository;
-//        this.specializationRepository = specializationRepository;
-//    }
-
-    // Create Doctor
+    // Create Doctor //
 
     @Override
+    @Transactional
     public DoctorResponseDTO createDoctor(DoctorDTO doctorDTO) {
-        // Option A: If you're creating a new doctor, make sure the ID is null
-        // and Hibernate will insert it.
-        // If an ID is present, treat it as an update.
         Doctor doctor = modelMapper.map(doctorDTO,Doctor.class);
-        if(doctorRepository.existsByDoctorNameAndSpecialization(doctor.getDoctorName(),doctor.getSpecialization())){
-            throw new APIException("Doctor with name " + doctorDTO.getDoctorName() + " and specialization " + doctorDTO.getSpecialization() + " already exist.");
-        }
         Doctor saveDoctor = doctorRepository.save(doctor);
         return modelMapper.map(saveDoctor,DoctorResponseDTO.class);
     }
@@ -87,6 +60,7 @@ public class DoctorServiceImpl implements DoctorService {
     // Update Doctor
 
     @Override
+    @Transactional
     public DoctorResponseDTO updateDoctor(Long doctorId, DoctorDTO doctorDTO) {
         Doctor existingDoctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor", "doctorId", doctorId));
@@ -109,6 +83,9 @@ public class DoctorServiceImpl implements DoctorService {
         if(doctorDTO.getEmail() != null){
             existingDoctor.setEmail(doctorDTO.getEmail());
         }
+        if(doctorDTO.getContactNumber() != null){
+            existingDoctor.setContactNumber(doctorDTO.getContactNumber());
+        }
 
         doctorRepository.save(existingDoctor);
         return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
@@ -117,6 +94,7 @@ public class DoctorServiceImpl implements DoctorService {
     // Delete Doctor
 
     @Override
+    @Transactional
     public DoctorResponseDTO deleteDoctor(Long doctorId){
         Doctor existingDoctor = doctorRepository.findByDoctorId(doctorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor","doctorId", doctorId));
@@ -129,8 +107,8 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public List<DoctorResponseDTO> searchDoctorsBySpecialization(String specialization) {
         List<Doctor> doctorSpecialization = doctorRepository.findBySpecializationContainingIgnoreCase(specialization);
-        if(doctorSpecialization == null){
-            throw new ResourceNotFoundException("Doctor","Specialization",specialization);
+        if(doctorSpecialization.isEmpty()){
+            throw new APIException("No doctor found with specialization: " + specialization);
         }
 
         return doctorSpecialization.stream()
@@ -147,14 +125,12 @@ public class DoctorServiceImpl implements DoctorService {
             throw new ResourceNotFoundException("Doctor","Name",name);
         }
 
+        if(doctorName.isEmpty()){
+            throw new APIException("No doctor found with name: " + name);
+        }
+
         return doctorName.stream()
                 .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
                 .collect(Collectors.toList());
     }
-
-    //Doctor Availability CURD Operations:
-
-
-
-
 }
