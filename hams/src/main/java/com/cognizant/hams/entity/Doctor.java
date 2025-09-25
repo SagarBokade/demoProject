@@ -6,10 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "doctor", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"contactNumber"}),
-        @UniqueConstraint(columnNames = {"email"})
-})
+@Table(name = "doctors")
 @Data
 @NoArgsConstructor
 public class Doctor {
@@ -50,5 +47,3 @@ public class Doctor {
     @Size(max = 255, message = "Address cannot exceed 255 characters")
     private String clinicAddress;
 }
-
-

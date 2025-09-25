@@ -1,6 +1,7 @@
 package com.cognizant.hams.service.Impl;
 
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
+import com.cognizant.hams.dto.Response.DoctorAndAvailabilityResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
 import com.cognizant.hams.entity.Doctor;
 import com.cognizant.hams.entity.DoctorAvailability;
@@ -72,13 +73,13 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     }
 
     @Override
-    public List<DoctorAvailabilityResponseDTO> getAvailableDoctor(String doctorName){
+    public List<DoctorAndAvailabilityResponseDTO> getAvailableDoctor(String doctorName){
         return doctorRepository.findByAvailableDoctorNameAndAvailability(doctorName);
     }
 
 
     @Override
-    public List<DoctorAvailabilityResponseDTO> searchDoctorByName(String doctorName){
+    public List<DoctorAndAvailabilityResponseDTO> searchDoctorByName(String doctorName){
         return doctorRepository.findByDoctorNameAndAvailability(doctorName);
     }
 }

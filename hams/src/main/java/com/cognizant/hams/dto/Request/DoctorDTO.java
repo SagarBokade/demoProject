@@ -1,6 +1,5 @@
 package com.cognizant.hams.dto.Request;
 
-import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

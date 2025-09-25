@@ -70,7 +70,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         return appointments.stream()
                 .map(appointment -> modelMapper.map(appointment, AppointmentResponseDTO.class))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override

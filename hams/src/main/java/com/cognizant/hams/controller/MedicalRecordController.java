@@ -24,10 +24,12 @@ public class MedicalRecordController {
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
     @GetMapping("/patient/{patientId}")
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<List<MedicalRecordResponseDTO>> getRecordsForPatient(@PathVariable Long patientId) {
         return ResponseEntity.ok(medicalRecordService.getRecordsForPatient(patientId));
     }
     @GetMapping("/doctor/{doctorId}")
+    @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<List<MedicalRecordResponseDTO>> getRecordsForDoctor(@PathVariable Long doctorId) {
         return ResponseEntity.ok(medicalRecordService.getRecordsForDoctor(doctorId));
     }

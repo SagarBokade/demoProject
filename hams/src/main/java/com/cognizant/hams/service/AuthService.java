@@ -60,7 +60,6 @@ public class AuthService {
         return jwtTokenUtil.generateToken(userDetails);
     }
 
-    // This method is for self-registration of a new user with a default role.
     public Patient registerNewUser(AuthRequest requestedUser) {
         Optional<User> existingUser = userRepository.findByUsername(requestedUser.getUsername());
         if (existingUser.isPresent()) {
@@ -88,8 +87,6 @@ public class AuthService {
 
     }
     @Transactional
-    // This method is for creating privileged users (e.g., Doctors, Admins) by an Admin.
-    //public User createPrivilegedUser(User newUser, String roleName)
     public Doctor createPrivilegedUser(AdminUserRequestDTO doctorDTO)
     {
         Optional<User> existingUser = userRepository.findByUsername(doctorDTO.getUsername());
@@ -117,8 +114,7 @@ public class AuthService {
         doctor.setClinicAddress(doctorDTO.getClinicAddress());
         doctor.setYearOfExperience(doctorDTO.getYearOfExperience());
         doctor.setSpecialization(doctorDTO.getSpecialization());
-        doctorRepository.save(doctor);
-        return  doctor;
-
+        Doctor savedDoctor = doctorRepository.save(doctor);
+        return  savedDoctor;
     }
 }
