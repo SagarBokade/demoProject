@@ -19,6 +19,9 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long appointmentId;
 
+    @Version
+    private Integer version;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
@@ -37,9 +40,6 @@ public class Appointment {
     private LocalTime endTime;
 
     private String reason;
-
-    @Version
-    private Integer version;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

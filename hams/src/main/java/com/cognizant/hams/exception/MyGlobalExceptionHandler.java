@@ -80,15 +80,15 @@ public class MyGlobalExceptionHandler {
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        String errorMessage = "A database constraint was violated, possibly due to duplicate data.";
-
-        if (ex.getMessage() != null && ex.getMessage().contains("Duplicate entry")) {
-            errorMessage = "This record already exists. Please check for duplicate information.";
-        }
-        return new ResponseEntity<>(errorMessage, HttpStatus.CONFLICT);
-    }
+//    @ExceptionHandler(DataIntegrityViolationException.class)
+//    public ResponseEntity<String> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+//        String errorMessage = "A database constraint was violated, possibly due to duplicate data.";
+//
+//        if (ex.getMessage() != null && ex.getMessage().contains("Duplicate entry")) {
+//            errorMessage = "This record already exists. Please check for duplicate information.";
+//        }
+//        return new ResponseEntity<>(errorMessage, HttpStatus.CONFLICT);
+//    }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<String> handleNotFoundException(NoHandlerFoundException ex) {

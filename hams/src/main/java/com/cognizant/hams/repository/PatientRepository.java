@@ -7,7 +7,11 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+
+import java.util.Optional;
+
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
     boolean existsByEmailAndContactNumber(@Email @NotBlank String email, @Pattern(regexp = "\\d{10}", message = "Invalid contact number") String contactNumber);
+    Optional<Object> findByUser_Username(String currentUsername);
 }

@@ -2,7 +2,6 @@ package com.cognizant.hams.service.Impl;
 
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
-import com.cognizant.hams.dto.Response.DoctorDetailsResponseDTO;
 import com.cognizant.hams.entity.Doctor;
 import com.cognizant.hams.entity.DoctorAvailability;
 import com.cognizant.hams.exception.APIException;
@@ -17,7 +16,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +53,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
         List<DoctorAvailability> availabilities = doctorAvailabilityRepository.findByDoctorDoctorId(doctorId);
         return availabilities.stream()
                 .map(availability -> modelMapper.map(availability, DoctorAvailabilityResponseDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Delete Availability Slot

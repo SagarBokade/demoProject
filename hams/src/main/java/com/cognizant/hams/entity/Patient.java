@@ -1,7 +1,5 @@
 package com.cognizant.hams.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,10 +8,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "patients", uniqueConstraints = {
@@ -36,8 +32,6 @@ public class Patient {
     private String name;
 
     @Past
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @JsonProperty("dateOfBirth")
     private LocalDate dateOfBirth;
 
     private String gender;
@@ -52,5 +46,6 @@ public class Patient {
 
     @NotBlank(message = "Address is required")
     private String address;
+
     private String bloodGroup;
 }

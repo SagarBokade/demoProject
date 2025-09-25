@@ -1,5 +1,6 @@
 package com.cognizant.hams.service;
 
+import com.cognizant.hams.dto.Request.AdminUserRequestDTO;
 import com.cognizant.hams.dto.Request.DoctorAvailabilityDTO;
 import com.cognizant.hams.dto.Response.DoctorDetailsResponseDTO;
 import com.cognizant.hams.dto.Response.DoctorAvailabilityResponseDTO;
@@ -11,7 +12,7 @@ import java.util.List;
 public interface DoctorService {
 
     // Basic Curd operation
-    DoctorResponseDTO createDoctor(DoctorDTO doctorDto);
+    DoctorResponseDTO createDoctor(AdminUserRequestDTO doctorDto);
     DoctorResponseDTO getDoctorById(Long doctorId);
     List<DoctorResponseDTO> getAllDoctor();
     DoctorResponseDTO updateDoctor(Long doctorId,DoctorDTO doctorDto);

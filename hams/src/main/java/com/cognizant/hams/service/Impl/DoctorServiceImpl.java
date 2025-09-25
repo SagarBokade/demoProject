@@ -1,36 +1,57 @@
 package com.cognizant.hams.service.Impl;
 
+import com.cognizant.hams.dto.Request.AdminUserRequestDTO;
 import com.cognizant.hams.dto.Request.DoctorDTO;
 import com.cognizant.hams.dto.Response.DoctorResponseDTO;
 import com.cognizant.hams.entity.Doctor;
+import com.cognizant.hams.entity.User;
 import com.cognizant.hams.exception.APIException;
 import com.cognizant.hams.exception.ResourceNotFoundException;
 import com.cognizant.hams.repository.DoctorRepository;
+import com.cognizant.hams.repository.UserRepository;
 import com.cognizant.hams.service.DoctorService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    // Create Doctor //
+
+
 
     @Override
-    @Transactional
-    public DoctorResponseDTO createDoctor(DoctorDTO doctorDTO) {
-        Doctor doctor = modelMapper.map(doctorDTO,Doctor.class);
-        Doctor saveDoctor = doctorRepository.save(doctor);
-        return modelMapper.map(saveDoctor,DoctorResponseDTO.class);
+    public DoctorResponseDTO createDoctor(AdminUserRequestDTO doctorDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isAuthorized = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR") || a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAuthorized) {
+            throw new AccessDeniedException("You are not authorized to create a new doctor.");
+        }
+
+        Doctor doctor = modelMapper.map(doctorDTO, Doctor.class);
+
+        String currentUsername = authentication.getName();
+        User loggedInUser = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", currentUsername));
+
+        doctor.setUser(loggedInUser);
+
+        Doctor savedDoctor = doctorRepository.save(doctor);
+        return modelMapper.map(savedDoctor, DoctorResponseDTO.class);
     }
 
     // Get Doctor By I'd:
@@ -54,52 +75,70 @@ public class DoctorServiceImpl implements DoctorService {
         }
         return doctors.stream()
                 .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Update Doctor
 
     @Override
-    @Transactional
     public DoctorResponseDTO updateDoctor(Long doctorId, DoctorDTO doctorDTO) {
-        Doctor existingDoctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor", "doctorId", doctorId));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
 
-        if(doctorDTO.getDoctorName() != null){
-            existingDoctor.setDoctorName(doctorDTO.getDoctorName());
-        }
-        if(doctorDTO.getQualification() != null){
-            existingDoctor.setQualification(doctorDTO.getQualification());
-        }
-        if(doctorDTO.getSpecialization() != null){
-            existingDoctor.setSpecialization(doctorDTO.getSpecialization());
-        }
-        if(doctorDTO.getYearOfExperience() != null){
-            existingDoctor.setYearOfExperience(doctorDTO.getYearOfExperience());
-        }
-        if(doctorDTO.getClinicAddress() != null){
-            existingDoctor.setClinicAddress(doctorDTO.getClinicAddress());
-        }
-        if(doctorDTO.getEmail() != null){
-            existingDoctor.setEmail(doctorDTO.getEmail());
-        }
-        if(doctorDTO.getContactNumber() != null){
-            existingDoctor.setContactNumber(doctorDTO.getContactNumber());
+        Doctor loggedInDoctor = (Doctor) doctorRepository.findByUser_Username(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", "username", currentUsername));
+
+        if (!loggedInDoctor.getDoctorId().equals(doctorId)) {
+            throw new AccessDeniedException("You are not authorized to update another doctor's details.");
         }
 
-        doctorRepository.save(existingDoctor);
-        return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
+        if (doctorDTO.getDoctorName() != null) {
+            loggedInDoctor.setDoctorName(doctorDTO.getDoctorName());
+        }
+        if (doctorDTO.getQualification() != null) {
+            loggedInDoctor.setQualification(doctorDTO.getQualification());
+        }
+        if (doctorDTO.getSpecialization() != null) {
+            loggedInDoctor.setSpecialization(doctorDTO.getSpecialization());
+        }
+        if (doctorDTO.getYearOfExperience() != null) {
+            loggedInDoctor.setYearOfExperience(doctorDTO.getYearOfExperience());
+        }
+        if (doctorDTO.getClinicAddress() != null) {
+            loggedInDoctor.setClinicAddress(doctorDTO.getClinicAddress());
+        }
+        if (doctorDTO.getEmail() != null) {
+            loggedInDoctor.setEmail(doctorDTO.getEmail());
+        }
+        if (doctorDTO.getContactNumber() != null) {
+            loggedInDoctor.setContactNumber(doctorDTO.getContactNumber());
+        }
+
+        doctorRepository.save(loggedInDoctor);
+        return modelMapper.map(loggedInDoctor, DoctorResponseDTO.class);
     }
 
     // Delete Doctor
-
     @Override
-    @Transactional
-    public DoctorResponseDTO deleteDoctor(Long doctorId){
-        Doctor existingDoctor = doctorRepository.findByDoctorId(doctorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor","doctorId", doctorId));
+    public DoctorResponseDTO deleteDoctor(Long doctorId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        Doctor loggedInDoctor = (Doctor) doctorRepository.findByUser_Username(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", "username", currentUsername));
+
+        if (!isAdmin && !loggedInDoctor.getDoctorId().equals(doctorId)) {
+            throw new AccessDeniedException("You are not authorized to delete another doctor's profile.");
+        }
+
+        Doctor existingDoctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", "doctorId", doctorId));
+
         doctorRepository.deleteById(doctorId);
-        return modelMapper.map(existingDoctor,DoctorResponseDTO.class);
+        return modelMapper.map(existingDoctor, DoctorResponseDTO.class);
     }
 
     // Search Doctors By Specialization
@@ -107,13 +146,13 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public List<DoctorResponseDTO> searchDoctorsBySpecialization(String specialization) {
         List<Doctor> doctorSpecialization = doctorRepository.findBySpecializationContainingIgnoreCase(specialization);
-        if(doctorSpecialization.isEmpty()){
-            throw new APIException("No doctor found with specialization: " + specialization);
+        if(doctorSpecialization == null){
+            throw new ResourceNotFoundException("Doctor","Specialization",specialization);
         }
 
         return doctorSpecialization.stream()
                 .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Search Doctors By Name
@@ -125,12 +164,8 @@ public class DoctorServiceImpl implements DoctorService {
             throw new ResourceNotFoundException("Doctor","Name",name);
         }
 
-        if(doctorName.isEmpty()){
-            throw new APIException("No doctor found with name: " + name);
-        }
-
         return doctorName.stream()
                 .map(doctor -> modelMapper.map(doctor,DoctorResponseDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

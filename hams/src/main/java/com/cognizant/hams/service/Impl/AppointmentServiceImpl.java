@@ -70,7 +70,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         return appointments.stream()
                 .map(appointment -> modelMapper.map(appointment, AppointmentResponseDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -83,8 +83,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         Appointment appointment = modelMapper.map(appointmentDTO, Appointment.class);
 
-        // Ensure the ID and version are null for a new entity.
-        // This prevents ModelMapper from carrying over a value from the DTO.
         appointment.setAppointmentId(null);
         appointment.setVersion(null);
 
@@ -98,6 +96,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         return modelMapper.map(savedAppointment, AppointmentResponseDTO.class);
     }
+
     @Override
     public AppointmentResponseDTO updateAppointment(Long appointmentId, AppointmentDTO appointmentUpdateDTO) {
         Appointment existingAppointment = appointmentRepository.findById(appointmentId)
@@ -109,7 +108,6 @@ public class AppointmentServiceImpl implements AppointmentService {
             existingAppointment.setDoctor(newDoctor);
         }
 
-        // **LOGIC UPDATE HERE**
         if (appointmentUpdateDTO.getAppointmentDate() != null) {
             existingAppointment.setAppointmentDate(appointmentUpdateDTO.getAppointmentDate());
         }
@@ -122,17 +120,13 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appointmentUpdateDTO.getReason() != null) {
             existingAppointment.setReason(appointmentUpdateDTO.getReason());
         }
-
         Appointment updatedAppointment = appointmentRepository.save(existingAppointment);
-
         return modelMapper.map(updatedAppointment, AppointmentResponseDTO.class);
     }
 
-    // ... (The rest of your service methods: cancelAppointment, getAppointmentById, etc. remain unchanged)
 
     @Override
     public AppointmentResponseDTO cancelAppointment(Long appointmentId) {
-        // ... (no changes needed here)
         Appointment appointmentToCancel = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment", "Id", appointmentId));
 
