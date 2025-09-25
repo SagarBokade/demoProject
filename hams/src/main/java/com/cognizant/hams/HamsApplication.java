@@ -10,5 +10,4 @@ public class HamsApplication {
 		SpringApplication.run(HamsApplication.class, args);
 
 	}
-
 }
