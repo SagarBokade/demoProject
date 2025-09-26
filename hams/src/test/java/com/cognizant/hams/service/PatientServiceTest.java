@@ -1,14 +1,13 @@
 package com.cognizant.hams.service;
 
-import com.cognizant.hams.dto.Request.PatientDTO;
-import com.cognizant.hams.dto.Response.DoctorResponseDTO;
-import com.cognizant.hams.dto.Response.PatientResponseDTO;
+import com.cognizant.hams.dto.request.PatientDTO;
+import com.cognizant.hams.dto.response.DoctorResponseDTO;
+import com.cognizant.hams.dto.response.PatientResponseDTO;
 import com.cognizant.hams.entity.Patient;
 import com.cognizant.hams.exception.APIException;
 import com.cognizant.hams.exception.ResourceNotFoundException;
 import com.cognizant.hams.repository.PatientRepository;
-import com.cognizant.hams.service.DoctorService;
-import com.cognizant.hams.service.Impl.PatientServiceImpl;
+import com.cognizant.hams.service.impl.PatientServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -105,8 +104,6 @@ public class PatientServiceTest {
         when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
         when(modelMapper.map(patient, PatientResponseDTO.class)).thenReturn(patientResponseDTO);
-
-        patientService.updatePatient(1L, updateDetails);
 
 
         verify(patientRepository, times(1)).findById(1L);

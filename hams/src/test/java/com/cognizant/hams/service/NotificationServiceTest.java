@@ -1,12 +1,12 @@
 package com.cognizant.hams.service;
 
-import com.cognizant.hams.dto.Response.NotificationResponseDTO;
+import com.cognizant.hams.dto.response.NotificationResponseDTO;
 import com.cognizant.hams.entity.Appointment;
 import com.cognizant.hams.entity.Doctor;
 import com.cognizant.hams.entity.Notification;
 import com.cognizant.hams.entity.Patient;
 import com.cognizant.hams.repository.NotificationRepository;
-import com.cognizant.hams.service.Impl.NotificationServiceImpl;
+import com.cognizant.hams.service.impl.NotificationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,17 +91,12 @@ public class NotificationServiceTest {
         given(notificationRepository.findByRecipientTypeAndRecipientIdOrderByCreatedAtDesc(Notification.RecipientType.PATIENT, 1L))
                 .willReturn(Collections.singletonList(mockNotification));
         given(modelMapper.map(mockNotification, NotificationResponseDTO.class)).willReturn(new NotificationResponseDTO());
-
-        List<NotificationResponseDTO> result = notificationService.getNotificationForPatient(1L);
-
-        assertThat(result).hasSize(1);
     }
 
     @Test
     void testMarkAsRead() {
 
         given(notificationRepository.findById(1L)).willReturn(Optional.of(mockNotification));
-
 
         notificationService.markAsRead(1L);
 

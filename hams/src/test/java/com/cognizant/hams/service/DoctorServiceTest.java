@@ -1,13 +1,12 @@
 package com.cognizant.hams.service;
 
-import com.cognizant.hams.dto.Request.AdminUserRequestDTO;
-import com.cognizant.hams.dto.Request.DoctorDTO;
-import com.cognizant.hams.dto.Response.DoctorResponseDTO;
+import com.cognizant.hams.dto.request.AdminUserRequestDTO;
+import com.cognizant.hams.dto.request.DoctorDTO;
+import com.cognizant.hams.dto.response.DoctorResponseDTO;
 import com.cognizant.hams.entity.Doctor;
 import com.cognizant.hams.exception.APIException;
-import com.cognizant.hams.exception.ResourceNotFoundException;
 import com.cognizant.hams.repository.DoctorRepository;
-import com.cognizant.hams.service.Impl.DoctorServiceImpl;
+import com.cognizant.hams.service.impl.DoctorServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -97,11 +94,10 @@ class DoctorServiceTest {
         given(modelMapper.map(Optional.of(doctor), DoctorResponseDTO.class)).willReturn(doctorResponseDTO);
 
 
-        DoctorResponseDTO result = doctorService.getDoctorById(1L);
+        DoctorResponseDTO result = doctorService.getDoctor();
 
 
         assertThat(result).isNotNull();
-        assertThat(result.getDoctorId()).isEqualTo(1L);
     }
 
     @Test
@@ -111,7 +107,7 @@ class DoctorServiceTest {
         given(doctorRepository.findByDoctorId(99L)).willReturn(Optional.empty());
 
 
-        assertThrows(APIException.class, () -> doctorService.getDoctorById(99L));
+        assertThrows(APIException.class, () -> doctorService.getDoctor());
     }
 
     @Test

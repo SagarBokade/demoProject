@@ -1,6 +1,6 @@
 package com.cognizant.hams.controller;
 
-import com.cognizant.hams.dto.Response.NotificationResponseDTO;
+import com.cognizant.hams.dto.response.NotificationResponseDTO;
 import com.cognizant.hams.security.CustomUserDetailsService;
 import com.cognizant.hams.security.JwtTokenUtil;
 import com.cognizant.hams.service.NotificationService;
@@ -38,8 +38,6 @@ public class NotificationControllerTest {
     @Test
     @WithMockUser
     public void testGetPatientNotifications() throws Exception {
-        Mockito.when(notificationService.getNotificationForPatient(1L))
-                .thenReturn(Collections.singletonList(new NotificationResponseDTO()));
 
         mockMvc.perform(get("/api/notifications/patients/{patientId}/notification", 1L))
                 .andExpect(status().isOk())
@@ -49,7 +47,7 @@ public class NotificationControllerTest {
     @Test
     @WithMockUser
     public void testGetNotificationsForDoctor() throws Exception {
-        Mockito.when(notificationService.getNotificationForDoctor(101L))
+        Mockito.when(notificationService.getNotificationForDoctor())
                 .thenReturn(Collections.singletonList(new NotificationResponseDTO()));
 
         mockMvc.perform(get("/api/notifications/doctors/{doctorId}/notification", 101L))

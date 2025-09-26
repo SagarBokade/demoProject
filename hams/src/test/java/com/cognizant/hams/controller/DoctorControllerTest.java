@@ -1,7 +1,7 @@
 package com.cognizant.hams.controller;
 
-import com.cognizant.hams.dto.Request.DoctorDTO;
-import com.cognizant.hams.dto.Response.DoctorResponseDTO;
+import com.cognizant.hams.dto.request.DoctorDTO;
+import com.cognizant.hams.dto.response.DoctorResponseDTO;
 import com.cognizant.hams.security.CustomUserDetailsService;
 import com.cognizant.hams.security.JwtTokenUtil;
 import com.cognizant.hams.service.DoctorService;
@@ -54,7 +54,7 @@ public class DoctorControllerTest {
         DoctorDTO doctorToCreate = new DoctorDTO("Dr. Strange", "MD", "Neurosurgery", "Sanctum", 10, "5551234567", "strange@sanctum.com");
         DoctorResponseDTO savedDoctor = new DoctorResponseDTO(1L, "Dr. Strange", "Neurosurgery", "MD", "Sanctum", 10, "strange@sanctum.com", "5551234567");
 
-        Mockito.when(doctorService.createDoctor(any(com.cognizant.hams.dto.Request.AdminUserRequestDTO.class))).thenReturn(savedDoctor);
+        Mockito.when(doctorService.createDoctor(any(com.cognizant.hams.dto.request.AdminUserRequestDTO.class))).thenReturn(savedDoctor);
 
         mockMvc.perform(post("/api/doctors")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,9 +67,9 @@ public class DoctorControllerTest {
 
     @Test
     @WithMockUser
-    public void testGetDoctorById() throws Exception {
+    public void testGetDoctor() throws Exception {
         DoctorResponseDTO doctor = new DoctorResponseDTO(1L, "Dr. Strange", "Neurosurgery", null, null, null, null, null);
-        Mockito.when(doctorService.getDoctorById(1L)).thenReturn(doctor);
+        Mockito.when(doctorService.getDoctor()).thenReturn(doctor);
 
         mockMvc.perform(get("/api/doctors/{doctorId}", 1L))
                 .andExpect(status().isOk())
