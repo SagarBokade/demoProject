@@ -1,8 +1,8 @@
 package com.cognizant.hams.service;
 
-import com.cognizant.hams.dto.Request.PatientDTO;
-import com.cognizant.hams.dto.Response.DoctorResponseDTO;
-import com.cognizant.hams.dto.Response.PatientResponseDTO;
+import com.cognizant.hams.dto.request.PatientDTO;
+import com.cognizant.hams.dto.response.DoctorResponseDTO;
+import com.cognizant.hams.dto.response.PatientResponseDTO;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public interface PatientService {
 
     PatientResponseDTO getPatientById(Long patientId);
 
-    PatientResponseDTO updatePatient(Long patientId, PatientDTO patientUpdateDTO);
+    PatientResponseDTO updatePatient(PatientDTO patientUpdateDTO);
 
     PatientResponseDTO deletePatient(Long patientId);
 

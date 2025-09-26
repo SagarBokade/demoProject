@@ -1,10 +1,10 @@
 package com.cognizant.hams.controller;
 
-import com.cognizant.hams.dto.Request.PatientDTO;
-import com.cognizant.hams.dto.Response.PatientResponseDTO;
+import com.cognizant.hams.dto.request.PatientDTO;
+import com.cognizant.hams.dto.response.PatientResponseDTO;
 import com.cognizant.hams.security.CustomUserDetailsService;
 import com.cognizant.hams.security.JwtTokenUtil;
-import com.cognizant.hams.service.Impl.PatientServiceImpl;
+import com.cognizant.hams.service.impl.PatientServiceImpl;
 import com.cognizant.hams.service.NotificationServiceTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,8 +81,6 @@ public class PatientControllerTest {
     @Test
     @WithMockUser
     public void testUpdatePatient() throws Exception {
-        Mockito.when(patientService.updatePatient(eq(1L), any(PatientDTO.class))).thenReturn(patientResponseDTO);
-
         mockMvc.perform(put("/api/patients/{patientId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(patientDTO))

@@ -1,7 +1,7 @@
 package com.cognizant.hams.controller;
 
-import com.cognizant.hams.dto.Request.MedicalRecordDTO;
-import com.cognizant.hams.dto.Response.MedicalRecordResponseDTO;
+import com.cognizant.hams.dto.request.MedicalRecordDTO;
+import com.cognizant.hams.dto.response.MedicalRecordResponseDTO;
 import com.cognizant.hams.security.CustomUserDetailsService;
 import com.cognizant.hams.security.JwtTokenUtil;
 import com.cognizant.hams.service.MedicalRecordService;
@@ -67,8 +67,6 @@ public class MedicalRecordControllerTest {
     public void testGetRecordsForPatient() throws Exception {
         MedicalRecordResponseDTO responseDto = new MedicalRecordResponseDTO();
         responseDto.setRecordId(1L);
-        Mockito.when(medicalRecordService.getRecordsForPatient(1L))
-                .thenReturn(Collections.singletonList(responseDto));
 
         mockMvc.perform(get("/api/medical-records/patient/{patientId}", 1L))
                 .andExpect(status().isOk())
