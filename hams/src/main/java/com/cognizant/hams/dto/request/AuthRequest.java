@@ -38,5 +38,4 @@ public class AuthRequest {
     private String address;
 
     private String bloodGroup;
-
 }

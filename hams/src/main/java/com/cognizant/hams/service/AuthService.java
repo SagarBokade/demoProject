@@ -14,6 +14,7 @@ import com.cognizant.hams.repository.RoleRepository;
 import com.cognizant.hams.repository.UserRepository;
 import com.cognizant.hams.security.JwtTokenUtil;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -36,16 +38,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final PatientRepository patientRepository;
 
-    public AuthService(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder,DoctorRepository doctorRepository,PatientRepository patientRepository) {
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.doctorRepository=doctorRepository;
-        this.patientRepository=patientRepository;
-    }
 
     public String createAuthenticationToken(String username, String password) {
         try {

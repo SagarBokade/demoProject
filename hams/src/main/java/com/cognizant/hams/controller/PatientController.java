@@ -20,34 +20,19 @@ import java.util.List;
 @RequestMapping("/api/patients")
 public class PatientController {
 
-
     private final PatientServiceImpl patientService;
-    private final NotificationService notificationService;
-    PatientRepository patientRepository;
 
-    @PostMapping
-    public ResponseEntity<PatientResponseDTO> createPatient(@Valid @RequestBody PatientDTO createDTO){
-        PatientResponseDTO newPatient = patientService.createPatient(createDTO);
-        return new ResponseEntity<>(newPatient, HttpStatus.CREATED);
+    @GetMapping
+    public ResponseEntity<PatientResponseDTO> getPatient() {
+        return ResponseEntity.ok(patientService.getPatient());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PatientResponseDTO> getPatientById(@PathVariable("id") Long patientId) {
-        return ResponseEntity.ok(patientService.getPatientById(patientId));
-    }
-
-    @PutMapping
+    @PatchMapping("/me")
     public ResponseEntity<PatientResponseDTO> updatePatient(@RequestBody PatientDTO patientUpdateDTO){
         PatientResponseDTO existingPatientDTO = patientService.updatePatient(patientUpdateDTO);
         return new ResponseEntity<>(existingPatientDTO,HttpStatus.OK);
     }
 
-    @DeleteMapping("/{patientId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PatientResponseDTO> deletePatient(@PathVariable("patientId") Long patientId){
-        PatientResponseDTO deletePatientDTO = patientService.deletePatient(patientId);
-        return new ResponseEntity<>(deletePatientDTO, HttpStatus.OK);
-    }
 
     @GetMapping("/doctor-name")
     public ResponseEntity<List<DoctorResponseDTO>> searchDoctorByName(@RequestParam("name") String name){

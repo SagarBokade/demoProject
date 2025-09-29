@@ -27,66 +27,26 @@ public class PatientServiceImpl implements PatientService {
     private final ModelMapper modelMapper;
     private final DoctorService doctorService;
 
-
     @Override
-    public PatientResponseDTO createPatient(PatientDTO patientCreateDTO){
-        Patient patient = modelMapper.map(patientCreateDTO, Patient.class);
-        patientRepository.save(patient);
-        return modelMapper.map(patient, PatientResponseDTO.class);
-    }
-
-
-    @Override
-    public PatientResponseDTO getPatientById(Long patientId){
-        // Get the authenticated user's details from the security context
+    public PatientResponseDTO getPatient() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-
-        Patient loggedInPatient = (Patient) patientRepository.findByUser_Username(currentUsername)
+        Patient patient = (Patient) patientRepository.findByUser_Username(currentUsername)
                 .orElseThrow(() -> new APIException("Logged-in user is not a patient."));
-
-        if (!isAdmin && !loggedInPatient.getPatientId().equals(patientId)) {
-            throw new AccessDeniedException("You are not authorized to view another patient's details.");
-        }
-
-        Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient", "patientId", patientId));
 
         return modelMapper.map(patient, PatientResponseDTO.class);
     }
 
     @Override
-    public PatientResponseDTO updatePatient(PatientDTO patientUpdateDTO) {
+    public PatientResponseDTO updatePatient(PatientDTO patientDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 
         Patient existingPatient = (Patient) patientRepository.findByUser_Username(currentUsername)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient", "username", currentUsername));
+                .orElseThrow(() -> new APIException("Logged-in user is not a patient."));
 
-        if(patientUpdateDTO.getContactNumber() != null){
-            existingPatient.setContactNumber(patientUpdateDTO.getContactNumber());
-        }
-        if(patientUpdateDTO.getEmail() != null){
-            existingPatient.setEmail(patientUpdateDTO.getEmail());
-        }
-        if(patientUpdateDTO.getAddress() != null){
-            existingPatient.setAddress(patientUpdateDTO.getAddress());
-        }
-        if(patientUpdateDTO.getGender() != null){
-            existingPatient.setGender(patientUpdateDTO.getGender());
-        }
-        if(patientUpdateDTO.getName() != null){
-            existingPatient.setName(patientUpdateDTO.getName());
-        }
-        if(patientUpdateDTO.getBloodGroup() != null){
-            existingPatient.setBloodGroup(patientUpdateDTO.getBloodGroup());
-        }
-        if(patientUpdateDTO.getDateOfBirth() != null){
-            existingPatient.setDateOfBirth(patientUpdateDTO.getDateOfBirth());
-        }
+        modelMapper.map(patientDTO, existingPatient);
 
         Patient updatedPatient = patientRepository.save(existingPatient);
 
@@ -106,7 +66,6 @@ public class PatientServiceImpl implements PatientService {
         return doctorService.getAllDoctor();
     }
 
-
     @Override
     public List<DoctorResponseDTO> searchDoctorByName(String name) {
         return doctorService.searchDoctorsByName(name);
@@ -116,7 +75,6 @@ public class PatientServiceImpl implements PatientService {
     public List<DoctorResponseDTO> searchDoctorBySpecialization(String specialization) {
         return doctorService.searchDoctorsBySpecialization(specialization);
     }
-
 }
 
 

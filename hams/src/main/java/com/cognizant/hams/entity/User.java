@@ -18,6 +18,12 @@ public class User {
     @JoinColumn(name = "roleId")
     private Role role;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Doctor doctor;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Patient patient;
+
     @PrePersist
     public void generateId() {
         if (this.userId == null) {
