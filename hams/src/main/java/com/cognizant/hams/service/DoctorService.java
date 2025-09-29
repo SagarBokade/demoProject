@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface DoctorService {
 
-    // Basic Curd operation
-    DoctorResponseDTO createDoctor(AdminUserRequestDTO doctorDto);
     DoctorResponseDTO getDoctor();
     List<DoctorResponseDTO> getAllDoctor();
     DoctorResponseDTO updateDoctor(Long doctorId,DoctorDTO doctorDto);

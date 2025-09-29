@@ -7,9 +7,8 @@ import com.cognizant.hams.dto.response.PatientResponseDTO;
 import java.util.List;
 
 public interface PatientService {
-    PatientResponseDTO createPatient(PatientDTO patientCreateDTO);
 
-    PatientResponseDTO getPatientById(Long patientId);
+    PatientResponseDTO getPatient();
 
     PatientResponseDTO updatePatient(PatientDTO patientUpdateDTO);
 
