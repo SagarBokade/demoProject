@@ -1,9 +1,9 @@
- package com.cognizant.hams.entity; // Or a new dto/enum package
+package com.cognizant.hams.entity;
 
-    public enum AppointmentStatus {
-        COMPLETED,
-        CANCELED,
-        PENDING,
-        CONFIRMED,
-        REJECTED,
-    }
+public enum AppointmentStatus {
+    PENDING,
+    CONFIRMED,
+    COMPLETED,
+    CANCELLED,
+    CANCELED, REJECTED
+}
